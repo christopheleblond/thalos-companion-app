@@ -1,0 +1,31 @@
+{
+  "events": [
+    {
+      "name": "Debu3555",
+      "dayId": "2025-05-10",
+      "start": "17h30",
+      "roomId": "jdr",
+      "activityId": "bb",
+      "tables": 99,
+      "description": "",
+      "id": "d37a",
+      "title": "Debu3",
+      "day": {
+        "id": "2025-05-10",
+        "date": "2025-05-10T00:00:00.000Z"
+      },
+      "room": {
+        "id": "jdr",
+        "name": "JDR"
+      },
+      "activity": {
+        "id": "bb",
+        "name": "Bloodbowl",
+        "style": {
+          "color": "white",
+          "backgroundColor": "red"
+        }
+      }
+    }
+  ]
+}
