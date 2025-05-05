@@ -1,11 +1,13 @@
+import { useUser } from "@/hooks/useUser";
 import { AgendaEvent } from "@/model/AgendaEvent";
+import { User } from "@/model/User";
 import { agendaService } from "@/services/AgendaService";
+import { FormState, isFormValid, ValidationErrors, Validators } from "@/utils/FormUtils";
+import { isEmpty } from "@/utils/Utils";
 import { useEffect, useState } from "react";
 import { Alert } from "react-native";
 import EventForm from "../forms/Event";
 import ModalPage, { ModalAction, ModalPageProps } from "../ModalPage";
-
-export type ValidationErrors = Record<string, boolean>;
 
 export type FormData = {
     name: string;
@@ -15,35 +17,32 @@ export type FormData = {
     activityId: string;
     roomId: string;
     tables?: number;
+    duration: number;
     description?: string;
+    creatorId?: string;
 }
 
 type Props = ModalPageProps & {
     onSuccess: (event: AgendaEvent) => void,
+    title?: string,
+    dayId?: string,
+    roomId?: string,
+    activityId?: string,
     event?: AgendaEvent
 };
-
-function isEmpty(value: string): boolean {
-    return !value || value.trim() === ''
-}
 
 function validateForm(formData: FormData): ValidationErrors {
     return {
         nameIsEmpty: isEmpty(formData.name),
+        nameIsLower: Validators.min(formData.name, 3),
+        nameIsHigher: Validators.max(formData.name, 20),
+        nameIsInvalid: !Validators.allowedCharacters(formData.name),
         dateIsEmpty: isEmpty(formData.dayId),
-        dateIsPassed: false,
+        dateIsPassed: Validators.dateIsPassed(new Date(formData.dayId)),
         startHourIsEmpty: isEmpty(formData.start),
         roomIsEmpty: isEmpty(formData.roomId),
         activityIsEmpty: isEmpty(formData.activityId)
     }
-}
-
-function isFormValid(errors: ValidationErrors): boolean {
-    return !errors || Object.keys(errors).every(e => !errors[e])
-}
-
-export type FormState = {
-    submitted: boolean
 }
 
 export default function EventFormModal(props: Props) {
@@ -51,10 +50,11 @@ export default function EventFormModal(props: Props) {
     const [formData, setFormData] = useState<FormData>({
 
         name: '',
-        dayId: '',
+        dayId: props.dayId ?? '',
         start: '',
-        roomId: '',
-        activityId: '',
+        duration: 99,
+        roomId: props.roomId ?? '',
+        activityId: props.activityId ?? '',
         tables: 99,
         description: '',
         ...(props.event ? props.event : {}),
@@ -62,16 +62,20 @@ export default function EventFormModal(props: Props) {
 
     const [formState, setFormState] = useState<FormState>({ submitted: false });
     const [errors, setErrors] = useState<ValidationErrors>({});
-
     const [saving, setSaving] = useState(false)
+    const [user, setUser] = useState<User | null>(null)
+
+    useUser()
+        .then(user => user != null ? setUser(user) : null)
 
     const resetForm = () => {
         setFormData({
             name: '',
-            dayId: '',
+            dayId: props.dayId ?? '',
             start: '',
-            roomId: '',
-            activityId: '',
+            duration: 99,
+            roomId: props.roomId ?? '',
+            activityId: props.activityId ?? '',
             tables: 99,
             description: '',
             ...(props.event ? props.event : {}),
@@ -94,7 +98,8 @@ export default function EventFormModal(props: Props) {
                 if (isFormValid(errors)) {
                     setSaving(true)
                     agendaService.saveEvent({
-                        ...formData
+                        ...formData,
+                        creator: user != null ? user : {}
                     } as Partial<AgendaEvent>).then((res) => {
                         setSaving(false);
                         try {
@@ -117,7 +122,7 @@ export default function EventFormModal(props: Props) {
         setErrors(errors);
     }, [formData])
 
-    return (<ModalPage {...props} onShow={resetForm} options={{ title: 'Créer', actions: ACTIONS }}>
+    return (<ModalPage {...props} onShow={resetForm} options={{ title: props.title || 'Créer', actions: ACTIONS }}>
         <EventForm formData={formData} errors={errors} state={formState} onChange={newFormData => setFormData(newFormData)} disabled={saving} />
     </ModalPage>)
 }

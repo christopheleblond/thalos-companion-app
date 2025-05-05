@@ -1,31 +1,45 @@
 {
   "events": [
     {
-      "name": "Debu3555",
-      "dayId": "2025-05-10",
-      "start": "17h30",
+      "name": "Test",
+      "dayId": "2025-05-24",
+      "start": "15h",
+      "duration": 90,
       "roomId": "jdr",
-      "activityId": "bb",
+      "activityId": "w40k",
       "tables": 99,
       "description": "",
-      "id": "d37a",
-      "title": "Debu3",
-      "day": {
-        "id": "2025-05-10",
-        "date": "2025-05-10T00:00:00.000Z"
+      "id": "1139",
+      "creator": {
+        "id": "6c1ab8dd-30f4d-e28b4-62df6-4cba34f704e6",
+        "name": "Modif",
+        "firstName": "Hello"
       },
+      "title": "Test",
+      "day": {
+        "id": "2025-05-24",
+        "date": "2025-05-24T00:00:00.000Z"
+      },
+      "durationInMinutes": 999,
       "room": {
         "id": "jdr",
         "name": "JDR"
       },
       "activity": {
-        "id": "bb",
-        "name": "Bloodbowl",
+        "id": "w40k",
+        "name": "Warhammer 40K",
         "style": {
           "color": "white",
-          "backgroundColor": "red"
+          "backgroundColor": "purple"
         }
       }
+    }
+  ],
+  "users": [
+    {
+      "id": "6c1ab8dd-30f4d-e28b4-62df6-4cba34f704e6",
+      "firstName": "Hello",
+      "name": "Modif"
     }
   ]
 }

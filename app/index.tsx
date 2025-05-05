@@ -30,9 +30,11 @@ export default function Main() {
         })
     }, [appContext.refreshs['home.events']])
 
+    console.log('Render Main')
+
     return (<SafeAreaView style={styles.container}>
 
-        <SettingsModal visible={settingsModalVisible} closeFunction={() => setSettingsModalVisible(false)} />
+        <SettingsModal visible={settingsModalVisible} closeFunction={() => setSettingsModalVisible(false)} onSuccess={(prefs) => { console.log('Prefs:', prefs) }} />
         <EventFormModal visible={eventFormModalVisible} closeFunction={() => setEventFormModalVisible(false)} onSuccess={(event) => {
             appContext.refresh(`home.events`)
             appContext.refresh(`agenda.${event?.day.id}`)

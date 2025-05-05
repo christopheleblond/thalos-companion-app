@@ -43,7 +43,7 @@ class CalendarService {
         }
         return {
             id: this.buildDayId(date),
-            day: date
+            date: date
         } as GameDay;
     }
 
@@ -55,7 +55,7 @@ class CalendarService {
         }
         return {
             id: this.buildDayId(date),
-            day: date
+            date: date
         } as GameDay;
     }
 }

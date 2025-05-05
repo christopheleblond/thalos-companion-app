@@ -1,4 +1,5 @@
 import { Colors } from "@/constants/Colors";
+import { durationToString } from "@/constants/Durations";
 import { AgendaEvent } from "@/model/AgendaEvent";
 import { agendaService } from "@/services/AgendaService";
 import { printGameDay } from "@/utils/Utils";
@@ -38,8 +39,10 @@ export default function AgendaEventCard({ style, event, ...rest }: Props) {
             ]);
     }
 
-    return <Pressable android_ripple={{ color: Colors.red, foreground: true }} onPress={rest.onPress}>
-        <Card style={[styles.container, { borderLeftColor: event.activity?.style.backgroundColor }, style]}>
+    const duration = event.durationInMinutes ? durationToString(event.durationInMinutes) : null;
+
+    return <Card style={{ borderLeftWidth: 10, borderLeftColor: event.activity?.style.backgroundColor }}>
+        <Pressable onPress={rest.onPress} style={[styles.container, {}, style]}>
             {/* TAG Activité */}
             {event.activity ? <View style={[styles.activity, { backgroundColor: event.activity.style.backgroundColor, alignSelf: 'flex-start' }]}>
                 <Text style={styles.activityName}>{event.activity.name}</Text>
@@ -52,13 +55,23 @@ export default function AgendaEventCard({ style, event, ...rest }: Props) {
             {event.start ? <View style={styles.hours}>
                 <MaterialIcons name={'schedule'} color={'gray'} size={20} style={{ paddingRight: 3 }} />
                 <Text style={styles.eventHoursText}>{event.start}</Text>
-                {event.end ? <Text style={styles.eventHoursText}> - {event.end}</Text> : null}
+                {duration ? <Text style={styles.eventHoursText}> ({`${duration.label}`})</Text> : null}
             </View> : <Text>?</Text>}
 
             {/* Nom */}
             <View style={styles.title}>
                 <Text style={{ fontSize: 30 }}>{event.title}</Text>
             </View>
+
+            {/* Creator */}
+            {rest.complete ? <View style={styles.creator}>
+                {event.creator ? <View style={{ flexDirection: 'row', gap: 3 }}><Text>Crée par</Text><Text style={{ fontStyle: 'italic' }}>{event.creator.name}</Text></View> : null}
+            </View> : null}
+
+            {/* Description */}
+            {rest.complete ? <View style={styles.description}>
+                {event.description ? <Text>{event.description}</Text> : <Text>Pas de description</Text>}
+            </View> : null}
 
             {/* Salle */}
             {event.room ? <View style={styles.location}>
@@ -72,27 +85,21 @@ export default function AgendaEventCard({ style, event, ...rest }: Props) {
                 </View>
             </View> : null}
 
-            {/* Description */}
-            {rest.complete ? <View style={styles.description}>
-                <Text>{event.description}</Text>
-            </View> : null}
-
             {rest.showButtons ? <View style={styles.buttons}>
                 <IconButton icon="edit-note" color="gray" size={32} onPress={() => rest.onEdit ? rest.onEdit() : null} />
                 <IconButton icon="delete" color={Colors.red} size={32} onPress={() => confirmDeleteEvent(event)} />
             </View> : null}
-        </Card>
-    </Pressable>
+        </Pressable>
+    </Card>
+
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'center',
-        borderLeftWidth: 10
+        alignItems: 'center'
     },
     cardItem: {
-        flex: 1,
         alignItems: 'center'
     },
     hours: {
@@ -126,9 +133,14 @@ const styles = StyleSheet.create({
     eventHoursText: {
         fontSize: 16
     },
+    creator: {
+
+    },
     description: {
+        flex: 1,
         margin: 5,
-        alignSelf: 'flex-start'
+        alignSelf: 'flex-start',
+        justifyContent: 'flex-start',
     },
     buttons: {
         flexDirection: 'row',

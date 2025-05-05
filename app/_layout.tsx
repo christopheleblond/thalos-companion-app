@@ -1,4 +1,8 @@
+import { StorageKeys } from '@/constants/StorageKeys';
+import { User } from '@/model/User';
+import { uuid } from '@/utils/Utils';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from "expo-font";
 import { SplashScreen, Tabs } from "expo-router";
 import { createContext, useEffect, useState } from "react";
@@ -7,15 +11,26 @@ import { createContext, useEffect, useState } from "react";
 SplashScreen.preventAutoHideAsync();
 
 export type AppContextProps = {
+  user?: User,
   refreshs: { [key: string]: string },
-  refresh: (key: string) => void
+  refresh: (key: string) => void,
+  setUser: (user: User) => void
 }
 export const AppContext = createContext<AppContextProps>({
   refreshs: {},
-  refresh: (key: string) => { }
+  refresh: (key: string) => { },
+  setUser: (user: User) => { }
 })
 
 export default function RootLayout() {
+
+  AsyncStorage.getItem(StorageKeys.USER_ID).then(userId => {
+    if (userId === null) {
+      return AsyncStorage.setItem(StorageKeys.USER_ID, uuid())
+    } else {
+      return Promise.resolve(JSON.parse(userId))
+    }
+  })
 
   const [appContext, setAppContext] = useState<AppContextProps>({
     refreshs: {},
@@ -26,6 +41,12 @@ export default function RootLayout() {
           refreshs: { ...prev.refreshs, [key]: new Date().toISOString() }
         }
       })
+    },
+    setUser: (user: User) => {
+      setAppContext(prev => ({
+        ...prev,
+        user
+      }))
     }
   })
 

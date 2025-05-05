@@ -1,6 +1,7 @@
 import AgendaEventCard from "@/components/AgendaEventCard";
 import Card from "@/components/Card";
 import IconButton from "@/components/IconButton";
+import EventFormModal from "@/components/modals/EventForm";
 import OccupationStats from "@/components/OccupationStats";
 import { Colors } from "@/constants/Colors";
 import { ROOMS } from "@/constants/Rooms";
@@ -9,6 +10,7 @@ import { GameDay } from "@/model/GameDay";
 import { agendaService } from "@/services/AgendaService";
 import { calendarService } from "@/services/CalendarService";
 import { printGameDay } from "@/utils/Utils";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -25,6 +27,7 @@ export default function GameDayPage() {
 
     const [events, setEvents] = useState<AgendaEvent[]>([]);
     const [loading, setLoading] = useState(false);
+    const [eventFormModalVisible, setEventFormModalVisible] = useState(false);
 
     const goPrevious = () => {
         router.replace(`/days/${previousDay?.id}`)
@@ -55,21 +58,38 @@ export default function GameDayPage() {
         }
     }, [day])
 
-    return <View style={{ flex: 1, padding: 10, alignItems: 'center' }}>
+    return <View style={{ flex: 1, padding: 10 }}>
+
+        <EventFormModal
+            visible={eventFormModalVisible}
+            dayId={params.dayId}
+            closeFunction={() => setEventFormModalVisible(false)} onSuccess={(event) => {
+                appContext.refresh(`home.events`)
+                appContext.refresh(`agenda.${event?.day.id}`)
+            }} />
+
         <View key="1" style={{ flexDirection: 'row', alignSelf: 'center' }}>
             <IconButton icon="arrow-left" color="gray" onPress={() => goPrevious()} />
             {day ? <Text style={styles.dayText}>{printGameDay(day)}</Text> : null}
             <IconButton icon="arrow-right" color="gray" onPress={() => goNext()} />
         </View>
-        {loading ? <ActivityIndicator color={Colors.red} size={50} /> : <ScrollView>
-            {events && events.map(e => (<AgendaEventCard key={e.id} event={e} />))}
-            {events && events.length > 0 && <View>
+        {loading ? <ActivityIndicator color={Colors.red} size={50} /> : <ScrollView style={{ flex: 1 / 2 }}>
+            {events?.length === 0 ? <View style={{ padding: 50, alignItems: 'center' }}>
+                <Text>Rien de prévu pour l'instant</Text>
+            </View> : events.map(e => (<AgendaEventCard key={e.id} event={e} onPress={() => router.push(`/${e.id}`)} />))}
+            <View style={{ flexDirection: 'row', padding: 10, alignSelf: 'center', backgroundColor: Colors.red, borderRadius: 50 }}>
+                <IconButton icon="add" size={50} color={'white'} onPress={() => setEventFormModalVisible(true)} />
+            </View>
+            <View>
                 <Text>Occupation des salles</Text>
                 {ROOMS.map(r => (<Card key={r.id}>
-                    <Text>{r.name}</Text>
-                    <OccupationStats roomId={r.id} />
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <MaterialIcons name="location-on" size={20} />
+                        <Text>{r.name}</Text>
+                    </View>
+                    {day && <OccupationStats roomId={r.id} events={events} />}
                 </Card>))}
-            </View>}
+            </View>
         </ScrollView>}
     </View>;
 }
