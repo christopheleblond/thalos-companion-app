@@ -77,8 +77,6 @@ export function eventIsActiveAt(event: AgendaEvent, hour: string): boolean {
     const endEventInMinutes = hhMinutes + event.durationInMinutes;
     const endEvent = numberToHour(endEventInMinutes)
 
-    console.log('eventIsActiveAt', 'hhM', endEvent)
-
     return startEvent.localeCompare(hh) <= 0
         && endEvent.localeCompare(hh) > 0;
 }

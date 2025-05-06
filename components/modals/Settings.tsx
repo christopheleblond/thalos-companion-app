@@ -42,7 +42,6 @@ export default function SettingsModal(props: Props) {
     }, [userId])
 
     useEffect(() => {
-        //settingsService.localSave(userPreferences).then(() => console.log('UserPreferences saved in local'))
         const errors = validateForm(userPreferences);
         setErrors(errors);
     }, [userPreferences])

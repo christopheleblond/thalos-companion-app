@@ -10,7 +10,8 @@ type Props = {
     value: ItemT | undefined,
     disabled?: boolean,
     getId: (item: ItemT) => string,
-    renderLabel: (item: ItemT) => React.ReactElement,
+    renderOptionText?: (item: ItemT) => string,
+    renderOption?: (item: ItemT) => React.ReactElement,
     onChange: (item: ItemT) => void
 }
 
@@ -30,10 +31,14 @@ export default function CustomSelect<ItemT>(props: Props) {
         setSelectedItem(currentItem)
     }, [currentItem])
 
+    const renderOptionOrText = (item: ItemT) => {
+        return props.renderOption ? props.renderOption(item) : props.renderOptionText ? <Text>{props.renderOptionText(item)}</Text> : null
+    }
+
     return <View style={styles.container}>
         <Text style={styles.label}>{props.label}</Text>
         <Pressable style={styles.input} onPress={() => !props.disabled ? setDropdownVisible(pre => !pre) : null}>
-            <View>{selectedItem ? props.renderLabel(selectedItem) : <Text>--</Text>}</View>
+            <View>{selectedItem ? renderOptionOrText(selectedItem) : <Text>--</Text>}</View>
             <MaterialIcons name={dropdownVisible ? "keyboard-arrow-up" : "keyboard-arrow-down"} color={'gray'} size={50} />
         </Pressable>
         {dropdownVisible && <View
@@ -44,7 +49,7 @@ export default function CustomSelect<ItemT>(props: Props) {
                         <Pressable key={props.getId(d)} style={styles.option}
                             android_ripple={{ color: 'red' }}
                             onPress={() => setSelected(d)}>
-                            <View>{props.renderLabel(d)}</View>
+                            {renderOptionOrText(d)}
                         </Pressable>))}
                 </View>
             </ScrollView>

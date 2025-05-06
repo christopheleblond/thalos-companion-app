@@ -43,3 +43,7 @@ export const Durations: Duration[] = [
 export function durationToString(durationInMinutes: number): Duration | undefined {
     return Durations.find(d => d.valueInMinutes === durationInMinutes);
 }
+
+export function parseDuration(label: string): Duration | undefined {
+    return Durations.find(d => d.label === label.trim().toLowerCase())
+}

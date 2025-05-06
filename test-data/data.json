@@ -1,40 +1,5 @@
 {
-  "events": [
-    {
-      "name": "Test",
-      "dayId": "2025-05-24",
-      "start": "15h",
-      "duration": 90,
-      "roomId": "jdr",
-      "activityId": "w40k",
-      "tables": 99,
-      "description": "",
-      "id": "1139",
-      "creator": {
-        "id": "6c1ab8dd-30f4d-e28b4-62df6-4cba34f704e6",
-        "name": "Modif",
-        "firstName": "Hello"
-      },
-      "title": "Test",
-      "day": {
-        "id": "2025-05-24",
-        "date": "2025-05-24T00:00:00.000Z"
-      },
-      "durationInMinutes": 999,
-      "room": {
-        "id": "jdr",
-        "name": "JDR"
-      },
-      "activity": {
-        "id": "w40k",
-        "name": "Warhammer 40K",
-        "style": {
-          "color": "white",
-          "backgroundColor": "purple"
-        }
-      }
-    }
-  ],
+  "events": [],
   "users": [
     {
       "id": "6c1ab8dd-30f4d-e28b4-62df6-4cba34f704e6",

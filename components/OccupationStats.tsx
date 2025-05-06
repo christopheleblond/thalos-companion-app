@@ -23,10 +23,6 @@ export default function OccupationStats(props: Props) {
             roomService.getRoomOccupationStatsFromEvents(props.roomId, props.events)
                 .then(stats => {
                     setStats(stats)
-                    if (props.roomId === 'main') {
-                        console.log(stats.filter(s => !s.tables));
-                    }
-
                 })
         } else if (props.dayId) {
             roomService.getRoomOccupationStats(props.roomId, props.dayId)
