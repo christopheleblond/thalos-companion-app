@@ -1,7 +1,7 @@
 import AgendaEventCard from "@/components/AgendaEventCard";
 import Card from "@/components/Card";
 import IconButton from "@/components/IconButton";
-import EventFormModal from "@/components/modals/EventForm";
+import EventFormModal from "@/components/modals/EventFormModal";
 import OccupationStats from "@/components/OccupationStats";
 import { Colors } from "@/constants/Colors";
 import { ROOMS } from "@/constants/Rooms";

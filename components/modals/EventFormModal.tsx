@@ -6,7 +6,7 @@ import { FormState, isFormValid, ValidationErrors, Validators } from "@/utils/Fo
 import { isEmpty } from "@/utils/Utils";
 import { useEffect, useState } from "react";
 import { Alert } from "react-native";
-import EventForm from "../forms/Event";
+import EventForm from "../forms/EventForm";
 import ModalPage, { ModalAction, ModalPageProps } from "../ModalPage";
 
 export type FormData = {

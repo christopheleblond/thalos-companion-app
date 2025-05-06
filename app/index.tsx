@@ -1,7 +1,7 @@
 import AgendaEventCard from "@/components/AgendaEventCard";
 import IconButton from "@/components/IconButton";
-import EventFormModal from "@/components/modals/EventForm";
-import SettingsModal from "@/components/modals/Settings";
+import EventFormModal from "@/components/modals/EventFormModal";
+import SettingsFormModal from "@/components/modals/SettingsFormModal";
 import { Colors } from "@/constants/Colors";
 import { AgendaEvent } from "@/model/AgendaEvent";
 import { agendaService } from "@/services/AgendaService";
@@ -32,7 +32,7 @@ export default function Main() {
 
     return (<SafeAreaView style={styles.container}>
 
-        <SettingsModal visible={settingsModalVisible} closeFunction={() => setSettingsModalVisible(false)} onSuccess={(prefs) => { }} />
+        <SettingsFormModal visible={settingsModalVisible} closeFunction={() => setSettingsModalVisible(false)} onSuccess={(prefs) => { }} />
         <EventFormModal visible={eventFormModalVisible} closeFunction={() => setEventFormModalVisible(false)} onSuccess={(event) => {
             appContext.refresh(`home.events`)
             appContext.refresh(`agenda.${event?.day.id}`)

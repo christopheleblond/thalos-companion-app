@@ -1,5 +1,5 @@
 import AgendaEventCard from "@/components/AgendaEventCard";
-import EventFormModal from "@/components/modals/EventForm";
+import EventFormModal from "@/components/modals/EventFormModal";
 import { AgendaEvent } from "@/model/AgendaEvent";
 import { agendaService } from "@/services/AgendaService";
 import { useLocalSearchParams, useRouter } from "expo-router";

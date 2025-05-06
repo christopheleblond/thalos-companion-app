@@ -18,7 +18,7 @@ function validateForm(formData: UserPreferences): ValidationErrors {
     }
 }
 
-export default function SettingsModal(props: Props) {
+export default function SettingsFormModal(props: Props) {
 
     const [userPreferences, setUserPreferences] = useState<UserPreferences>({ id: '', firstName: '', name: '', activities: {}, isNew: true })
     const [formState, setFormState] = useState<FormState>({ submitted: false });

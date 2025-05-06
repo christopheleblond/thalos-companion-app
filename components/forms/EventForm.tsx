@@ -8,7 +8,7 @@ import { CustomFormProps, hasError } from "@/utils/FormUtils";
 import { printGameDay } from "@/utils/Utils";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { FormData } from "../modals/EventForm";
+import { FormData } from "../modals/EventFormModal";
 import CustomSelect from "./CustomSelect";
 import FormInputText from "./FormInputText";
 
