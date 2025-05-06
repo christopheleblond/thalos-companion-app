@@ -1,5 +1,7 @@
 import { Occupation } from "@/components/OccupationStats";
 import { AgendaEvent } from "@/model/AgendaEvent";
+import { GameDay } from "@/model/GameDay";
+import { Room } from "@/model/Room";
 import { eventIsActiveAt } from "@/utils/Utils";
 import { API, ApiService } from "./Api";
 
@@ -37,12 +39,16 @@ class RoomService {
         return Promise.resolve(occupations)
     }
 
-    getRoomOccupationStats(roomId: string, dayId: string): Promise<Occupation[]> {
-        return this.api.findEventsByDayIdAndRoomId(dayId, roomId)
-            .then(events => {
+    async getRoomOccupationStats(roomId: string, dayId: string): Promise<Occupation[]> {
+        const events = await this.api.findEventsByDayIdAndRoomId(dayId, roomId);
+        return events.map(e => ({
+            hour: e.start,
+            tables: e.tables
+        } as Occupation))
+    }
 
-                return [];
-            });
+    async getRoomOccupationAt(room: Room, day: GameDay, start: string, duration: number): Promise<number> {
+        return Promise.resolve(10)
     }
 }
 export const roomService = new RoomService(API)

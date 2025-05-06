@@ -3,19 +3,23 @@ import { Room } from "@/model/Models";
 export const ROOMS: Room[] = [
     {
         id: 'main',
-        name: 'Salle principale'
+        name: 'Grande Salle',
+        capacity: 100
     },
     {
         id: 'jdr',
-        name: 'JDR'
+        name: 'Salle JDR',
+        capacity: 8
     },
     {
         id: 'annexe',
-        name: 'Annexe'
+        name: 'Salle Annexe',
+        capacity: 12
     },
     {
         id: 'algeco',
-        name: 'Algéco'
+        name: 'Algéco',
+        capacity: 14
     },
     {
         id: 'autre',

@@ -2,13 +2,33 @@ import { ACTIVITIES } from "@/constants/Activities";
 import { Colors } from "@/constants/Colors";
 import { Durations } from "@/constants/Durations";
 import { ROOMS, TABLES } from "@/constants/Rooms";
+import { GameDay } from "@/model/GameDay";
+import { Room } from "@/model/Room";
 import { calendarService } from "@/services/CalendarService";
+import { roomService } from "@/services/RoomService";
 import { CustomFormProps, hasError } from "@/utils/FormUtils";
 import { printGameDay } from "@/utils/Utils";
-import { ScrollView, StyleSheet, Text } from "react-native";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { FormData } from "../modals/EventForm";
 import CustomSelect from "./CustomSelect";
 import FormInputText from "./FormInputText";
+
+export function RoomSelectOption({ day, hour, room, duration }: { day: GameDay, hour: string, duration: number, room: Room }) {
+
+    const remainingTables = roomService.getRoomOccupationAt(room, day, hour, duration);
+
+    return <>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Text style={styles.optionText}>{room.name}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
+                <Text style={styles.optionText}>{remainingTables}
+                </Text>
+                <MaterialIcons name="table-restaurant" />
+            </View>
+        </View>
+    </>
+}
 
 export default function EventForm(props: CustomFormProps<FormData>) {
 
@@ -30,7 +50,7 @@ export default function EventForm(props: CustomFormProps<FormData>) {
             getId={(d) => d.id}
             value={props.formData.dayId}
             onChange={(it) => props.onChange({ ...props.formData, dayId: it.id })}
-            renderLabel={(it) => printGameDay(it)}
+            renderLabel={(it) => (<Text style={styles.optionText}>{printGameDay(it)}</Text>)}
             disabled={props.disabled}
         />
         {props.state?.submitted && hasError(props.errors, 'dateIsEmpty') ? <Text style={styles.fieldError}>La date est obligatoire</Text> : null}
@@ -40,7 +60,7 @@ export default function EventForm(props: CustomFormProps<FormData>) {
             getId={(h) => h}
             value={props.formData.start}
             onChange={(it) => props.onChange({ ...props.formData, start: it })}
-            renderLabel={(it) => it}
+            renderLabel={(it: string) => (<Text style={styles.optionText}>{it}</Text>)}
             disabled={props.disabled}
         />
         {props.state?.submitted && hasError(props.errors, 'startHourIsEmpty') ? <Text style={styles.fieldError}>L'heure de début est obligatoire</Text> : null}
@@ -50,7 +70,7 @@ export default function EventForm(props: CustomFormProps<FormData>) {
             getId={(h) => h.valueInMinutes}
             value={props.formData.duration}
             onChange={(it) => props.onChange({ ...props.formData, duration: it.valueInMinutes })}
-            renderLabel={(it) => it.label}
+            renderLabel={(it) => (<Text style={styles.optionText}>{it.label}</Text>)}
             disabled={props.disabled}
         />
 
@@ -59,7 +79,7 @@ export default function EventForm(props: CustomFormProps<FormData>) {
             getId={(r) => r.id}
             value={props.formData.activityId}
             onChange={(it) => props.onChange({ ...props.formData, activityId: it.id })}
-            renderLabel={(it) => it.name}
+            renderLabel={(it) => (<Text style={styles.optionText}>{it.name}</Text>)}
             disabled={props.disabled}
         />
         {props.state?.submitted && hasError(props.errors, 'activityIsEmpty') ? <Text style={styles.fieldError}>L'activité principale est obligatoire</Text> : null}
@@ -69,7 +89,7 @@ export default function EventForm(props: CustomFormProps<FormData>) {
             getId={(r) => r.id}
             value={props.formData.roomId}
             onChange={(it) => props.onChange({ ...props.formData, roomId: it.id })}
-            renderLabel={(it) => it.name}
+            renderLabel={(it) => (<RoomSelectOption room={it} />)}
             disabled={props.disabled}
         />
         {props.state?.submitted && hasError(props.errors, 'roomIsEmpty') ? <Text style={styles.fieldError}>La salle est obligatoire</Text> : null}
@@ -79,7 +99,7 @@ export default function EventForm(props: CustomFormProps<FormData>) {
             getId={(t) => t}
             value={props.formData.tables}
             onChange={(t) => props.onChange({ ...props.formData, tables: t })}
-            renderLabel={(t) => t === 99 ? 'Toute la salle' : t}
+            renderLabel={(t) => (<Text style={styles.optionText}>{t === 99 ? 'Toute la salle' : t + ' tables'}</Text>)}
             disabled={props.disabled}
         />
 
@@ -95,5 +115,8 @@ export default function EventForm(props: CustomFormProps<FormData>) {
 const styles = StyleSheet.create({
     fieldError: {
         color: Colors.red
+    },
+    optionText: {
+        color: Colors.black
     }
 })
