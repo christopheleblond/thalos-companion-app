@@ -1,21 +1,25 @@
+import { ACTIVITIES } from "@/constants/Activities";
+import { ROOMS } from "@/constants/Rooms";
+import { Activity } from "@/model/Activity";
 import { AgendaEvent } from "@/model/AgendaEvent";
+import { Room } from "@/model/Room";
 import { User } from "@/model/User";
 import { fromActivityId, fromGameDayId, fromRoomId } from "@/utils/Utils";
 
 const baseUrl = 'http://192.168.1.51:3000';
 
-const agendaEventMapper = (json: any): AgendaEvent => {
+export const agendaEventMapper = (json: any, rooms = ROOMS, activities = ACTIVITIES): AgendaEvent => {
     return {
         ...json,
         title: json['name'],
-        day: fromGameDayId(json['dayId']),
-        durationInMinutes: json['duration'],
-        room: fromRoomId(json['roomId']),
-        activity: fromActivityId(json['activityId']),
+        day: fromGameDayId(json['day']['id']),
+        durationInMinutes: json['durationInMinutes'],
+        room: fromRoomId(json['room']['id'], rooms),
+        activity: fromActivityId(json['activity']['id'], activities),
     }
 }
 
-const userMapper = (json: any): User => {
+export const userMapper = (json: any): User => {
     return {
         id: json['id'],
         name: json['name'],
@@ -24,6 +28,9 @@ const userMapper = (json: any): User => {
 }
 
 export class ApiService {
+
+    constructor(private readonly activities: Activity[], private readonly rooms: Room[]) {
+    }
 
     findUserById(userId: string): Promise<User | null> {
         return fetch(`${baseUrl}/users/${userId}`, { method: 'GET' })
@@ -66,7 +73,7 @@ export class ApiService {
         console.log('findEventById() ', eventId);
         return fetch(`${baseUrl}/events?id=${eventId}`, { method: 'GET' })
             .then(resp => resp.json())
-            .then(json => agendaEventMapper(json[0]))
+            .then(json => agendaEventMapper(json[0], this.rooms, this.activities))
     }
 
     findEventsByDayId(dayId: string): Promise<AgendaEvent[]> {
@@ -78,13 +85,13 @@ export class ApiService {
     findEventsByDayIdAndRoomId(dayId: string, roomId: string): Promise<AgendaEvent[]> {
         console.log('findEventsByDayIdAndRoomId()', dayId);
         return fetch(`${baseUrl}/events?dayId=${dayId}&roomId=${roomId}`)
-            .then(resp => resp.json()).then(json => json.map(agendaEventMapper))
+            .then(resp => resp.json()).then(json => json.map((it: any) => agendaEventMapper(it, this.rooms, this.activities)))
     }
 
     findAllEvents(): Promise<AgendaEvent[]> {
         console.log('findAllEvents()')
         return fetch(`${baseUrl}/events`, { method: 'GET' })
-            .then(resp => resp.json()).then(json => json.map(agendaEventMapper))
+            .then(resp => resp.json()).then(json => json.map((it: any) => agendaEventMapper(it, this.rooms, this.activities)))
     }
 
     saveEvent(event: Partial<AgendaEvent>): Promise<AgendaEvent> {
@@ -94,7 +101,7 @@ export class ApiService {
                 'Content-Type': 'application/json'
             }
         }).then(resp => resp.json())
-            .then(agendaEventMapper);
+            .then(json => agendaEventMapper(json, this.rooms, this.activities));
     }
 
     updateEvent(event: Partial<AgendaEvent>): Promise<AgendaEvent> {
@@ -104,7 +111,7 @@ export class ApiService {
                 'Content-Type': 'application/json'
             }
         }).then(resp => resp.json())
-            .then(agendaEventMapper);
+            .then(json => agendaEventMapper(json, this.rooms, this.activities));
     }
 
     deleteEvent(eventId: string): Promise<void> {
@@ -113,4 +120,4 @@ export class ApiService {
     }
 }
 
-export const API = new ApiService()
+export const API = new ApiService(ACTIVITIES, ROOMS)

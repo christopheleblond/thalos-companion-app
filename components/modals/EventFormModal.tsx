@@ -10,14 +10,14 @@ import EventForm from "../forms/EventForm";
 import ModalPage, { ModalAction, ModalPageProps } from "../ModalPage";
 
 export type FormData = {
-    name: string;
+    title: string;
     dayId: string;
     start: string;
     end?: string;
     activityId: string;
     roomId: string;
     tables?: number;
-    duration: number;
+    durationInMinutes: number;
     description?: string;
     creatorId?: string;
 }
@@ -33,10 +33,10 @@ type Props = ModalPageProps & {
 
 function validateForm(formData: FormData): ValidationErrors {
     return {
-        nameIsEmpty: isEmpty(formData.name),
-        nameIsLower: Validators.min(formData.name, 3),
-        nameIsHigher: Validators.max(formData.name, 20),
-        nameIsInvalid: !Validators.allowedCharacters(formData.name),
+        nameIsEmpty: isEmpty(formData.title),
+        nameIsLower: Validators.min(formData.title, 3),
+        nameIsHigher: Validators.max(formData.title, 20),
+        nameIsInvalid: !Validators.allowedCharacters(formData.title),
         dateIsEmpty: isEmpty(formData.dayId),
         dateIsPassed: Validators.dateIsPassed(new Date(formData.dayId)),
         startHourIsEmpty: isEmpty(formData.start),
@@ -47,18 +47,19 @@ function validateForm(formData: FormData): ValidationErrors {
 
 export default function EventFormModal(props: Props) {
 
-    const [formData, setFormData] = useState<FormData>({
-
-        name: '',
-        dayId: props.dayId ?? '',
+    const emptyForm = ({dayId, roomId, activityId, event }: Props) => ({
+        title: '',
+        dayId: dayId ?? '',
         start: '',
-        duration: 99,
-        roomId: props.roomId ?? '',
-        activityId: props.activityId ?? '',
+        durationInMinutes: 99,
+        roomId: roomId ?? '',
+        activityId: activityId ?? '',
         tables: 99,
         description: '',
-        ...(props.event ? props.event : {}),
-    });
+        ...(event ? event : {}),
+    })
+
+    const [formData, setFormData] = useState<FormData>(emptyForm(props));
 
     const [formState, setFormState] = useState<FormState>({ submitted: false });
     const [errors, setErrors] = useState<ValidationErrors>({});
@@ -69,19 +70,26 @@ export default function EventFormModal(props: Props) {
         .then(user => user != null ? setUser(user) : null)
 
     const resetForm = () => {
-        setFormData({
-            name: '',
-            dayId: props.dayId ?? '',
-            start: '',
-            duration: 99,
-            roomId: props.roomId ?? '',
-            activityId: props.activityId ?? '',
-            tables: 99,
-            description: '',
-            ...(props.event ? props.event : {}),
-        });
+        setFormData(emptyForm(props));
         setFormState({ submitted: false });
         setErrors({})
+    }
+
+    const saveForm = (formData: FormData) =>  {
+        setSaving(true)
+        agendaService.saveEvent({
+            ...formData,
+            creator: user != null ? user : {}
+        } as Partial<AgendaEvent>).then((res) => {
+            setSaving(false);
+            try {
+                props.onSuccess(res);
+            } catch (error) {
+                console.error('An error occured in success function', error)
+            }
+
+            props.closeFunction();
+        })
     }
 
     const ACTIONS: ModalAction[] = [
@@ -96,20 +104,7 @@ export default function EventFormModal(props: Props) {
             onPress: () => {
                 setFormState({ ...formState, submitted: true })
                 if (isFormValid(errors)) {
-                    setSaving(true)
-                    agendaService.saveEvent({
-                        ...formData,
-                        creator: user != null ? user : {}
-                    } as Partial<AgendaEvent>).then((res) => {
-                        setSaving(false);
-                        try {
-                            props.onSuccess(res);
-                        } catch (error) {
-                            console.error('An error occured in success function', error)
-                        }
-
-                        props.closeFunction();
-                    })
+                    saveForm(formData)
                 } else {
                     Alert.alert('Invalid', 'Le formulaire est invalide')
                 }

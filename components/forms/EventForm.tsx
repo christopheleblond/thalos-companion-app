@@ -35,8 +35,8 @@ export default function EventForm(props: CustomFormProps<FormData>) {
     return <ScrollView>
         <FormInputText disabled={props.disabled}
             label="Nom"
-            value={props.formData.name}
-            onChangeText={(text) => props.onChange({ ...props.formData, name: text })} />
+            value={props.formData.title}
+            onChangeText={(text) => props.onChange({ ...props.formData, title: text })} />
         {props.state?.submitted && hasError(props.errors, 'nameIsEmpty') ? <Text style={styles.fieldError}>Le nom est obligatoire</Text> : null}
         {props.state?.submitted && (hasError(props.errors, 'nameIsLower') || hasError(props.errors, 'nameIsHigher')) ? <Text style={styles.fieldError}>Le nom doit être entre 3 et 20 caractères</Text> : null}
         {props.state?.submitted && hasError(props.errors, 'nameIsInvalid') ? <Text style={styles.fieldError}>Le nom doit être alphanumérique (caractères spéciaux autorisés : # @ *)</Text> : null}
@@ -64,8 +64,8 @@ export default function EventForm(props: CustomFormProps<FormData>) {
         <CustomSelect label="Durée"
             data={durations}
             getId={(h) => h.valueInMinutes}
-            value={props.formData.duration}
-            onChange={(it) => props.onChange({ ...props.formData, duration: it.valueInMinutes })}
+            value={props.formData.durationInMinutes}
+            onChange={(it) => props.onChange({ ...props.formData, durationInMinutes: it.valueInMinutes })}
             renderOptionText={(it) => it.label}
             disabled={props.disabled}
         />

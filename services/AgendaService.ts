@@ -1,5 +1,5 @@
-
 import { AgendaEvent } from "@/model/AgendaEvent";
+import { fromActivityId, fromGameDayId, fromRoomId, getEndTime, getStartTime } from "@/utils/Utils";
 import { API, ApiService } from "./Api";
 
 class AgendaService {
@@ -19,10 +19,23 @@ class AgendaService {
     }
 
     saveEvent(event: Partial<AgendaEvent>): Promise<AgendaEvent> {
+        const day = fromGameDayId(event.dayId);
+        if(day === null || !event?.durationInMinutes) {
+            throw new Error('Unable to save event : ' + event)
+        }
+        const enriched = {
+            ...event,            
+            day,
+            activity: fromActivityId(event.activityId),
+            room: fromRoomId(event.roomId),
+            startTime: getStartTime(day!, event.start!),
+            endTime: getEndTime(day!, event.start!, event.durationInMinutes)
+        } as Partial<AgendaEvent>;
+
         if (event.id) {
-            return this.api.updateEvent(event);
+            return this.api.updateEvent(enriched);
         } else {
-            return this.api.saveEvent(event);
+            return this.api.saveEvent(enriched);
         }
     }
 

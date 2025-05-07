@@ -14,11 +14,17 @@ export function isNotEmpty(value: string | null): boolean {
     return !isEmpty(value);
 }
 
-export function fromActivityId(id: string): Activity | undefined {
-    return ACTIVITIES.find(a => a.id === id);
+export function fromActivityId(id: string | undefined, activities = ACTIVITIES): Activity | null {
+    if(id === undefined) {
+        return null;
+    }
+    return activities.find(a => a.id === id) ?? null;
 }
 
-export function fromGameDayId(id: string): GameDay {
+export function fromGameDayId(id: string | undefined): GameDay | null {
+    if(!id) {
+        return null;
+    }
     const date = new Date(id)
     return {
         id,
@@ -53,8 +59,26 @@ export function numberToHour(minutes: number): string {
     return `${hh}h${min}`
 }
 
-export function fromRoomId(roomId: string): Room | undefined {
-    return ROOMS.find(r => r.id === roomId);
+export function getStartTime(day: GameDay, start: string): number {    
+    return day.date.getTime() + (hourToNumber(start) * 60 * 1000);
+}
+
+export function getEndTime(day: GameDay, start: string, durationInMinutes: number): number {
+    return getStartTime(day, start) + durationInMinutes * 60 * 1000;
+}
+
+export function eventIsInTimeSlot(event: AgendaEvent, start: number, end: number): boolean {
+    const eventStartTime = event.startTime || 0
+    const eventEndTime = event.endTime || 0
+    return (eventStartTime >= start && eventStartTime <= end)
+        || (eventEndTime > start && eventEndTime < end);
+}
+
+export function fromRoomId(roomId: string | undefined, rooms = ROOMS): Room | null {
+    if(roomId === undefined) {
+        return null;
+    }
+    return rooms.find(r => r.id === roomId);
 }
 
 export function removeAll(arr: string[], value: string): string[] {
