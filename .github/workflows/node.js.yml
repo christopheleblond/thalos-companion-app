@@ -26,4 +26,3 @@ jobs:
       - run: npm run lint
       - run: npm run build --if-present
       - run: npm run ci:test
-      - run: npm install -g eas-cli && eas build --platform android
