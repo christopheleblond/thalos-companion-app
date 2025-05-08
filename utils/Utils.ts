@@ -15,14 +15,14 @@ export function isNotEmpty(value: string | null): boolean {
 }
 
 export function fromActivityId(id: string | undefined, activities = ACTIVITIES): Activity | null {
-    if(id === undefined) {
+    if (id === undefined) {
         return null;
     }
     return activities.find(a => a.id === id) ?? null;
 }
 
 export function fromGameDayId(id: string | undefined): GameDay | null {
-    if(!id) {
+    if (!id) {
         return null;
     }
     const date = new Date(id)
@@ -59,7 +59,7 @@ export function numberToHour(minutes: number): string {
     return `${hh}h${min}`
 }
 
-export function getStartTime(day: GameDay, start: string): number {    
+export function getStartTime(day: GameDay, start: string): number {
     return day.date.getTime() + (hourToNumber(start) * 60 * 1000);
 }
 
@@ -75,14 +75,14 @@ export function eventIsInTimeSlot(event: AgendaEvent, start: number, end: number
 }
 
 export function fromRoomId(roomId: string | undefined, rooms = ROOMS): Room | null {
-    if(roomId === undefined) {
+    if (roomId === undefined) {
         return null;
     }
     return rooms.find(r => r.id === roomId);
 }
 
 export function removeAll(arr: string[], value: string): string[] {
-    var i = 0;
+    let i = 0;
     while (i < arr.length) {
         if (arr[i] === value) {
             arr.splice(i, 1);

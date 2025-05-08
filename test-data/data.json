@@ -1,10 +1,44 @@
 {
-  "events": [],
+  "events": [
+    {
+      "id": "8f81",
+      "title": "Nom",
+      "dayId": "2025-05-23",
+      "start": "15h",
+      "durationInMinutes": 90,
+      "roomId": "main",
+      "activityId": "jds",
+      "tables": 99,
+      "description": "Description ",
+      "creator": {
+        "id": "173ca6e9-4a998-0a265-25386-117ce379c8a9"
+      },
+      "day": {
+        "id": "2025-05-23",
+        "date": "2025-05-23T00:00:00.000Z"
+      },
+      "activity": {
+        "id": "jds",
+        "name": "Jeu de société",
+        "style": {
+          "color": "black",
+          "backgroundColor": "orange"
+        }
+      },
+      "room": {
+        "id": "main",
+        "name": "Grande Salle",
+        "capacity": 100
+      },
+      "startTime": 1748012400000,
+      "endTime": 1748017800000
+    }
+  ],
   "users": [
     {
-      "id": "6c1ab8dd-30f4d-e28b4-62df6-4cba34f704e6",
-      "firstName": "Hello",
-      "name": "Modif"
+      "id": "c47b9db1-ccbf7-01cbf-c2ac5-974590310ceb",
+      "firstName": "Christophe",
+      "name": "Tof"
     }
   ]
 }

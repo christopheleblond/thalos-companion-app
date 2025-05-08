@@ -11,9 +11,7 @@ const baseUrl = 'http://192.168.1.51:3000';
 export const agendaEventMapper = (json: any, rooms = ROOMS, activities = ACTIVITIES): AgendaEvent => {
     return {
         ...json,
-        title: json['name'],
         day: fromGameDayId(json['day']['id']),
-        durationInMinutes: json['durationInMinutes'],
         room: fromRoomId(json['room']['id'], rooms),
         activity: fromActivityId(json['activity']['id'], activities),
     }
@@ -79,7 +77,7 @@ export class ApiService {
     findEventsByDayId(dayId: string): Promise<AgendaEvent[]> {
         console.log('findEventsByDayId()', dayId);
         return fetch(`${baseUrl}/events?dayId=${dayId}`)
-            .then(resp => resp.json()).then(json => json.map(agendaEventMapper))
+            .then(resp => resp.json()).then(json => json.map((it: any) => agendaEventMapper(it, this.rooms, this.activities)))
     }
 
     findEventsByDayIdAndRoomId(dayId: string, roomId: string): Promise<AgendaEvent[]> {

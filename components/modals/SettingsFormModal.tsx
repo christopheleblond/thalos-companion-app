@@ -24,20 +24,18 @@ export default function SettingsFormModal(props: Props) {
     const [formState, setFormState] = useState<FormState>({ submitted: false });
     const [errors, setErrors] = useState<ValidationErrors>({});
     const [saving, setSaving] = useState(false)
-    const [userId, setUserId] = useState(new Date().toISOString())
+    const userId = useUserId()
 
-    useUserId()
-        .then(userId => {
-            setUserId(userId)
-            return settingsService.get()
-        })
-        .then(prefs => {
-            if (prefs === null) {
-                setUserPreferences({ id: userId, name: '', firstName: '', isNew: true } as UserPreferences)
-            } else {
-                setUserPreferences(prefs)
-            }
-        })
+    useEffect(() => {
+        settingsService.get()
+            .then(prefs => {
+                if (prefs === null) {
+                    setUserPreferences({ id: userId, name: '', firstName: '', isNew: true } as UserPreferences)
+                } else {
+                    setUserPreferences(prefs)
+                }
+            })
+    }, [userId])
 
     useEffect(() => {
         const errors = validateForm(userPreferences);

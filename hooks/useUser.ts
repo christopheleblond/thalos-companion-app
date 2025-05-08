@@ -1,23 +1,36 @@
 import { AppContext } from "@/app/_layout";
+import { User } from "@/model/User";
 import { userService } from "@/services/UserService";
 import { isNotEmpty } from "@/utils/Utils";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useUserId } from "./useUserId";
 
-export async function useUser() {
+export function useUser(): User | null {
     const appContext = useContext(AppContext)
+    const userId = useUserId()
+    const [user, setUser] = useState<User | null>(null);
 
-    if (appContext.user && isNotEmpty(appContext.user.id)) {
-        return Promise.resolve(appContext.user);
 
-    } else {
-        const userId = await useUserId();
-        const user = await userService.getUserById(userId)
-        if (user != null) {
-            appContext.setUser(user);
-            console.log('Set user in app context', user)
+    useEffect(() => {
+        if (appContext.user && isNotEmpty(appContext.user.id)) {
+            setUser(appContext.user)
         } else {
-            console.error('Unable to find user by id ', userId)
+            userService.getUserById(userId)
+                .then(existing => {
+                    if (existing === null) {
+                        return userService.createUser({
+                            id: userId
+                        } as User)
+                    } else {
+                        return Promise.resolve(existing)
+                    }
+                })
+                .then(user => {
+                    appContext.setUser(user)
+                    setUser(user)
+                })
         }
-    }
+    }, [userId, appContext])
+
+    return user;
 }

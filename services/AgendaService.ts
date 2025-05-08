@@ -20,11 +20,11 @@ class AgendaService {
 
     saveEvent(event: Partial<AgendaEvent>): Promise<AgendaEvent> {
         const day = fromGameDayId(event.dayId);
-        if(day === null || !event?.durationInMinutes) {
+        if (day === null || !event?.durationInMinutes) {
             throw new Error('Unable to save event : ' + event)
         }
         const enriched = {
-            ...event,            
+            ...event,
             day,
             activity: fromActivityId(event.activityId),
             room: fromRoomId(event.roomId),

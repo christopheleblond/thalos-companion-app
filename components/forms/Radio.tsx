@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/Colors"
 import { useEffect, useState } from "react"
 import { Pressable, StyleSheet, Text, View, ViewProps } from "react-native"
 
@@ -18,7 +19,7 @@ export default function Radio({ style, label, value, options, onChange, ...props
     useEffect(() => {
         if (onChange)
             onChange(checkedValue)
-    }, [checkedValue, onChange])
+    }, [checkedValue])
 
     return <View style={[styles.container, style]} {...props}>
         <Text style={styles.label}>{label}</Text>
@@ -50,7 +51,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     checked: {
-        backgroundColor: 'blue',
+        backgroundColor: Colors.red,
         color: 'white'
     }
 })

@@ -9,6 +9,10 @@ class UserService {
     getUserById(userId: string): Promise<User | null> {
         return this.api.findUserById(userId);
     }
+
+    createUser(user: User): Promise<User> {
+        return this.api.saveOrUpdateUser(user, true)
+    }
 }
 
 export const userService = new UserService(API)

@@ -46,4 +46,4 @@ jobs:
       - name: 📦 Install dependencies
         run: npm install
       - name: 🚀 Build android app
-        run: eas build --non-interactive --platform=android --no-wait     
+        run: eas build --non-interactive --platform=android --no-wait --profile=preview 

@@ -3,7 +3,9 @@ import { Colors } from "@/constants/Colors";
 import { Activity } from "@/model/Activity";
 import { parseYesOrNo, UserPreferences, YesOrNo } from "@/model/UserPreferences";
 import { CustomFormProps, hasError } from "@/utils/FormUtils";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
+import IconButton from "../IconButton";
 import FormInputText from "./FormInputText";
 import Radio from "./Radio";
 
@@ -13,6 +15,21 @@ type ActivityOption = {
 }
 
 export default function SettingsForm(props: CustomFormProps<UserPreferences>) {
+    const clearLocalData = () => {
+        Alert.alert('Réinitialiser toutes les données', 'Toutes les données locales vont être supprimées. Ok ?', [
+            {
+                text: 'Annuler',
+                style: 'cancel'
+            },
+            {
+                text: 'Supprimer',
+                style: "destructive",
+                onPress: () => {
+                    AsyncStorage.clear(() => props.onChange({ ...props.formData, id: '', activities: {} }))
+                }
+            }
+        ])
+    }
 
     const activityChange = (activity: Activity, value: YesOrNo | undefined) => {
         props.onChange({
@@ -23,7 +40,10 @@ export default function SettingsForm(props: CustomFormProps<UserPreferences>) {
 
     return <ScrollView>
 
-        <Text>ID: {props.formData.id}</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text>ID: {props.formData.id}</Text>
+            <IconButton icon="delete" color={Colors.black} size={30} onPress={clearLocalData} />
+        </View>
 
         <FormInputText disabled={props.disabled}
             label="Prénom"

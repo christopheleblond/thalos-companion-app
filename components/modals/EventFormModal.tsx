@@ -1,6 +1,5 @@
 import { useUser } from "@/hooks/useUser";
 import { AgendaEvent } from "@/model/AgendaEvent";
-import { User } from "@/model/User";
 import { agendaService } from "@/services/AgendaService";
 import { FormState, isFormValid, ValidationErrors, Validators } from "@/utils/FormUtils";
 import { isEmpty } from "@/utils/Utils";
@@ -47,7 +46,7 @@ function validateForm(formData: FormData): ValidationErrors {
 
 export default function EventFormModal(props: Props) {
 
-    const emptyForm = ({dayId, roomId, activityId, event }: Props) => ({
+    const emptyForm = ({ dayId, roomId, activityId, event }: Props) => ({
         title: '',
         dayId: dayId ?? '',
         start: '',
@@ -64,10 +63,7 @@ export default function EventFormModal(props: Props) {
     const [formState, setFormState] = useState<FormState>({ submitted: false });
     const [errors, setErrors] = useState<ValidationErrors>({});
     const [saving, setSaving] = useState(false)
-    const [user, setUser] = useState<User | null>(null)
-
-    useUser()
-        .then(user => user != null ? setUser(user) : null)
+    const user = useUser()
 
     const resetForm = () => {
         setFormData(emptyForm(props));
@@ -75,7 +71,7 @@ export default function EventFormModal(props: Props) {
         setErrors({})
     }
 
-    const saveForm = (formData: FormData) =>  {
+    const saveForm = (formData: FormData) => {
         setSaving(true)
         agendaService.saveEvent({
             ...formData,
