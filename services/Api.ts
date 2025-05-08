@@ -89,7 +89,8 @@ export class ApiService {
     findAllEvents(): Promise<AgendaEvent[]> {
         console.log('findAllEvents()')
         return fetch(`${baseUrl}/events`, { method: 'GET' })
-            .then(resp => resp.json()).then(json => json.map((it: any) => agendaEventMapper(it, this.rooms, this.activities)))
+            .then(resp => resp.json())
+            .then(json => json.map((it: any) => agendaEventMapper(it, this.rooms, this.activities)))
     }
 
     saveEvent(event: Partial<AgendaEvent>): Promise<AgendaEvent> {

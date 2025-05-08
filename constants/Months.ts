@@ -5,3 +5,4 @@ export const Months = [
 export const DaysOfWeek = [
     'Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi',
 ]
+

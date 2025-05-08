@@ -44,7 +44,6 @@ export default function EventForm(props: CustomFormProps<FormData>) {
     const days = calendarService.buildDaysFromDate(new Date(), 60);
     const hours = calendarService.hours();
     const durations = Durations;
-    const [rooms, setRooms] = useState<Room[]>([])
 
     const init = ROOMS.map(r => ({ [r.id]: r.capacity || TOUTE_LA_SALLE }))
         .reduce((prev, cur) => {

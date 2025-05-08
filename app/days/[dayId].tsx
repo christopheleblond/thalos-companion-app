@@ -3,6 +3,7 @@ import Card from "@/components/Card";
 import IconButton from "@/components/IconButton";
 import EventFormModal from "@/components/modals/EventFormModal";
 import OccupationStats from "@/components/OccupationStats";
+import RoomPriorities from "@/components/RoomPriorities";
 import { Colors } from "@/constants/Colors";
 import { ROOMS } from "@/constants/Rooms";
 import { AgendaEvent } from "@/model/AgendaEvent";
@@ -84,11 +85,13 @@ export default function GameDayPage() {
             </View>
             <View>
                 <Text>Occupation des salles</Text>
+                {day ? <RoomPriorities day={day} /> : null}
                 {ROOMS.map(r => (<Card key={r.id}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <MaterialIcons name="location-on" size={20} />
                         <Text>{r.name}</Text>
                     </View>
+
                     {day && <OccupationStats room={r} events={events} />}
                 </Card>))}
             </View>

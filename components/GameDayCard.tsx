@@ -39,12 +39,13 @@ export default function GameDayCard({ day, ...props }: Props) {
             <Text style={styles.day}>{printGameDay(day)}</Text>
         </View>
 
-        {loading ? <ActivityIndicator color={Colors.red} size={"small"} /> : null}
+        {loading ? <ActivityIndicator color={Colors.red} size={"small"} /> : null
+        }
         <View style={{ paddingTop: 10 }}>
             {!events || events.length === 0 ? <Text style={styles.emptyText}>Aucun évènement prévu</Text> : null}
             {events && events.map(e => (<Text style={[styles.event, { ...e.activity?.style }]} key={e.id}>{e.start} - {e.activity?.name} : {e.title}</Text>))}
         </View>
-    </Card>
+    </Card >
 }
 
 const styles = StyleSheet.create({

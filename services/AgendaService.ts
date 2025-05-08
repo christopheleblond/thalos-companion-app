@@ -6,16 +6,20 @@ class AgendaService {
 
     constructor(private api: ApiService) { }
 
+    sortEvents(events: AgendaEvent[]): AgendaEvent[] {
+        return events.sort((a, b) => a.startTime! - b.startTime!)
+    }
+
     findEventById(eventId: string): Promise<AgendaEvent> {
         return this.api.findEventById(eventId);
     }
 
     findEventsOfDay(dayId: string): Promise<AgendaEvent[]> {
-        return this.api.findEventsByDayId(dayId);
+        return this.api.findEventsByDayId(dayId).then(this.sortEvents);;
     }
 
     findAllEvents(): Promise<AgendaEvent[]> {
-        return this.api.findAllEvents();
+        return this.api.findAllEvents().then(this.sortEvents);
     }
 
     saveEvent(event: Partial<AgendaEvent>): Promise<AgendaEvent> {

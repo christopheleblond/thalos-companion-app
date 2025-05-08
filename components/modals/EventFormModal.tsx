@@ -96,6 +96,7 @@ export default function EventFormModal(props: Props) {
         {
             name: 'cancel',
             label: 'Annuler',
+            color: 'gray',
             onPress: () => props.closeFunction ? props.closeFunction() : console.error('No close function defined')
         },
         {
