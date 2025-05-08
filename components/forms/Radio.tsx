@@ -18,7 +18,7 @@ export default function Radio({ style, label, value, options, onChange, ...props
     useEffect(() => {
         if (onChange)
             onChange(checkedValue)
-    }, [checkedValue])
+    }, [checkedValue, onChange])
 
     return <View style={[styles.container, style]} {...props}>
         <Text style={styles.label}>{label}</Text>

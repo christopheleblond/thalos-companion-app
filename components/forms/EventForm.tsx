@@ -59,7 +59,7 @@ export default function EventForm(props: CustomFormProps<FormData>) {
             renderOptionText={(it: string) => it}
             disabled={props.disabled}
         />
-        {props.state?.submitted && hasError(props.errors, 'startHourIsEmpty') ? <Text style={styles.fieldError}>L'heure de début est obligatoire</Text> : null}
+        {props.state?.submitted && hasError(props.errors, 'startHourIsEmpty') ? <Text style={styles.fieldError}>L&lsquo;heure de début est obligatoire</Text> : null}
 
         <CustomSelect label="Durée"
             data={durations}
@@ -78,7 +78,7 @@ export default function EventForm(props: CustomFormProps<FormData>) {
             renderOptionText={(it) => it.name}
             disabled={props.disabled}
         />
-        {props.state?.submitted && hasError(props.errors, 'activityIsEmpty') ? <Text style={styles.fieldError}>L'activité principale est obligatoire</Text> : null}
+        {props.state?.submitted && hasError(props.errors, 'activityIsEmpty') ? <Text style={styles.fieldError}>L&lsquo;activité principale est obligatoire</Text> : null}
 
         <CustomSelect label="Salle"
             data={ROOMS}

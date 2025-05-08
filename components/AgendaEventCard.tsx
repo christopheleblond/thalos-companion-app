@@ -31,9 +31,8 @@ export default function AgendaEventCard({ style, event, ...rest }: Props) {
                 {
                     text: 'Supprimer',
                     onPress: () => {
-                        agendaService.deleteEvent(event.id!).then(() => {
-                            rest.onDelete ? rest.onDelete() : null;
-                        })
+                        agendaService.deleteEvent(event.id!)
+                            .then(rest.onDelete ? rest.onDelete : null)
                     }
                 }
             ]);

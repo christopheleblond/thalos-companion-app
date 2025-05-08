@@ -37,6 +37,8 @@ export default function GameDayPage() {
         router.replace(`/days/${nextDay?.id}`)
     }
 
+    const needARefresh = appContext.refreshs[`agenda.${day?.id}`];
+
     useEffect(() => {
         setLoading(true)
         setDay({
@@ -49,7 +51,7 @@ export default function GameDayPage() {
                 setEvents(events)
                 setLoading(false)
             }).catch(error => setLoading(false))
-    }, [params.dayId, appContext.refreshs[`agenda.${day?.id}`]])
+    }, [params.dayId, needARefresh])
 
     useEffect(() => {
         if (day) {
@@ -75,7 +77,7 @@ export default function GameDayPage() {
         </View>
         {loading ? <ActivityIndicator color={Colors.red} size={50} /> : <ScrollView style={{ flex: 1 / 2 }}>
             {events?.length === 0 ? <View style={{ padding: 50, alignItems: 'center' }}>
-                <Text>Rien de prévu pour l'instant</Text>
+                <Text>Rien de prévu pour l&lsquo;instant</Text>
             </View> : events.map(e => (<AgendaEventCard key={e.id} event={e} onPress={() => router.push(`/${e.id}`)} />))}
             <View style={{ flexDirection: 'row', padding: 10, alignSelf: 'center', backgroundColor: Colors.red, borderRadius: 50 }}>
                 <IconButton icon="add" size={50} color={'white'} onPress={() => setEventFormModalVisible(true)} />

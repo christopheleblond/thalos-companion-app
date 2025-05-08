@@ -1,8 +1,7 @@
-import { AppContext } from "@/app/_layout";
 import { AgendaEvent } from "@/model/AgendaEvent";
 import { roomService } from "@/services/RoomService";
 import { clamp } from "@/utils/Utils";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 export type Occupation = { hour: string, tables: number }
@@ -15,7 +14,6 @@ type Props = {
 
 export default function OccupationStats(props: Props) {
 
-    const appContext = useContext(AppContext);
     const [stats, setStats] = useState<Occupation[]>([]);
 
     useEffect(() => {
@@ -31,10 +29,10 @@ export default function OccupationStats(props: Props) {
                 })
         }
 
-    }, [props.roomId]);
+    }, [props.dayId, props.roomId, props.events]);
 
     return <>
-        {!stats || stats.filter(s => s.tables > 0).length == 0 ? <Text style={{ color: 'gray', alignSelf: 'center' }}>Disponible toute la journée</Text> :
+        {!stats || stats.filter(s => s.tables > 0).length === 0 ? <Text style={{ color: 'gray', alignSelf: 'center' }}>Disponible toute la journée</Text> :
             <ScrollView style={styles.container} horizontal={true}>
                 {stats && stats.map(st => (<View key={st.hour} style={{ flex: 1, alignItems: 'center' }}>
                     <Text>{st.tables}</Text>

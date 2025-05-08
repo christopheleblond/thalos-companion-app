@@ -24,7 +24,7 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run build --if-present
-      - run: npm ci:test
+      - run: npm run ci:test
       - name: 🏗 Setup EAS
         uses: expo/expo-github-action@v8
         with:

@@ -22,13 +22,15 @@ export default function Main() {
     const [events, setEvents] = useState<AgendaEvent[]>([]);
     const [loading, setLoading] = useState(false)
 
+    const needARefresh = appContext.refreshs['home.events']
+
     useEffect(() => {
         setLoading(true)
         agendaService.findAllEvents().then(events => {
             setEvents(events)
             setLoading(false)
         })
-    }, [appContext.refreshs['home.events']])
+    }, [needARefresh])
 
     return (<SafeAreaView style={styles.container}>
 

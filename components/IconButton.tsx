@@ -1,5 +1,5 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { ButtonProps, Pressable, PressableProps } from "react-native";
+import { Pressable, PressableProps } from "react-native";
 
 export type IconSymbolName = React.ComponentProps<typeof MaterialIcons>['name'];
 

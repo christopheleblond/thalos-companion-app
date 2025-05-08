@@ -26,20 +26,18 @@ export default function SettingsFormModal(props: Props) {
     const [saving, setSaving] = useState(false)
     const [userId, setUserId] = useState(new Date().toISOString())
 
-    useEffect(() => {
-        useUserId()
-            .then(userId => {
-                setUserId(userId)
-                return settingsService.get()
-            })
-            .then(prefs => {
-                if (prefs === null) {
-                    setUserPreferences({ id: userId, name: '', firstName: '', isNew: true } as UserPreferences)
-                } else {
-                    setUserPreferences(prefs)
-                }
-            })
-    }, [userId])
+    useUserId()
+        .then(userId => {
+            setUserId(userId)
+            return settingsService.get()
+        })
+        .then(prefs => {
+            if (prefs === null) {
+                setUserPreferences({ id: userId, name: '', firstName: '', isNew: true } as UserPreferences)
+            } else {
+                setUserPreferences(prefs)
+            }
+        })
 
     useEffect(() => {
         const errors = validateForm(userPreferences);

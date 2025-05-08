@@ -19,6 +19,8 @@ export default function GameDayCard({ day, ...props }: Props) {
     const [events, setEvents] = useState<AgendaEvent[]>([])
     const [loading, setLoading] = useState(false);
 
+    const needARefresh = appContext.refreshs[`agenda.${day.id}`];
+
     useEffect(() => {
         setLoading(true);
         agendaService.findEventsOfDay(day.id)
@@ -29,7 +31,7 @@ export default function GameDayCard({ day, ...props }: Props) {
                 console.error(error);
                 setLoading(false);
             })
-    }, [day, appContext.refreshs[`agenda.${day.id}`]])
+    }, [day, needARefresh])
 
     return <Card style={[styles.container, day.date.getDay() === 5 ? styles.friday : null]}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
