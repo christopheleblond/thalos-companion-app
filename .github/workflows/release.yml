@@ -44,5 +44,5 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
       - name: 📦 Install dependencies
         run: npm install
-      - name: 🚀 Build app
-        run: eas build --non-interactive
+      - name: 🚀 Build android app
+        run: eas build --non-interactive --platform=android
