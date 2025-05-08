@@ -1,5 +1,6 @@
 import { Colors } from "@/constants/Colors";
 import { durationToString } from "@/constants/Durations";
+import { TOUTE_LA_SALLE } from "@/constants/Rooms";
 import { AgendaEvent } from "@/model/AgendaEvent";
 import { agendaService } from "@/services/AgendaService";
 import { printGameDay } from "@/utils/Utils";
@@ -80,7 +81,7 @@ export default function AgendaEventCard({ style, event, ...rest }: Props) {
                 </View>
                 <View style={{ flexDirection: 'row' }}>
                     <MaterialIcons name={'table-restaurant'} color={'gray'} size={20} />
-                    <Text>: {event.tables !== 99 ? `${event.tables}` : 'Toute la salle'}</Text>
+                    <Text>: {event.tables !== TOUTE_LA_SALLE ? `${event.tables}` : 'Toute la salle'}</Text>
                 </View>
             </View> : null}
 

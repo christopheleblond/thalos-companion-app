@@ -1,8 +1,7 @@
 import { Occupation } from "@/components/OccupationStats";
 import { AgendaEvent } from "@/model/AgendaEvent";
-import { GameDay } from "@/model/GameDay";
 import { Room } from "@/model/Room";
-import { eventIsActiveAt } from "@/utils/Utils";
+import { clamp, eventIsActiveAt } from "@/utils/Utils";
 import { API, ApiService } from "./Api";
 
 class RoomService {
@@ -16,11 +15,11 @@ class RoomService {
         }
     }
 
-    getRoomOccupationStatsFromEvents(roomId: string, events: AgendaEvent[]): Promise<Occupation[]> {
+    getRoomOccupationStatsFromEvents(room: Room, events: AgendaEvent[]): Promise<Occupation[]> {
 
         const occupations = this.hours.map(hh => {
 
-            const tables = events.filter(e => e.room?.id === roomId && eventIsActiveAt(e, hh))
+            const tables = events.filter(e => e.room?.id === room.id && eventIsActiveAt(e, hh))
                 .map(e => e.tables)
                 .reduce((acc, cur) => {
                     if (acc !== undefined && cur !== undefined) {
@@ -32,23 +31,21 @@ class RoomService {
 
             return {
                 hour: hh,
-                tables: tables
+                tables: tables,
+                availableTables: clamp((room.capacity || 0) - (tables || 0), 0, room.capacity)
             } as Occupation;
         })
 
         return Promise.resolve(occupations)
     }
 
-    async getRoomOccupationStats(roomId: string, dayId: string): Promise<Occupation[]> {
-        const events = await this.api.findEventsByDayIdAndRoomId(dayId, roomId);
+    async getRoomOccupationStats(room: Room, dayId: string): Promise<Occupation[]> {
+        const events = await this.api.findEventsByDayIdAndRoomId(dayId, room.id);
         return events.map(e => ({
             hour: e.start,
-            tables: e.tables
+            tables: e.tables,
+            availableTables: 10
         } as Occupation))
-    }
-
-    async getRoomOccupationAt(room: Room, day: GameDay, start: string, duration: number): Promise<number> {
-        return Promise.resolve(10)
     }
 }
 export const roomService = new RoomService(API)

@@ -78,7 +78,7 @@ export function fromRoomId(roomId: string | undefined, rooms = ROOMS): Room | nu
     if (roomId === undefined) {
         return null;
     }
-    return rooms.find(r => r.id === roomId);
+    return rooms.find(r => r.id === roomId) ?? null
 }
 
 export function removeAll(arr: string[], value: string): string[] {

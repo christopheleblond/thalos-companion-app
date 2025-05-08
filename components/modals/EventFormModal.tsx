@@ -1,3 +1,5 @@
+import { JUSQUA_LA_FERMETURE } from "@/constants/Durations";
+import { TOUTE_LA_SALLE } from "@/constants/Rooms";
 import { useUser } from "@/hooks/useUser";
 import { AgendaEvent } from "@/model/AgendaEvent";
 import { agendaService } from "@/services/AgendaService";
@@ -9,6 +11,7 @@ import EventForm from "../forms/EventForm";
 import ModalPage, { ModalAction, ModalPageProps } from "../ModalPage";
 
 export type FormData = {
+    id?: string;
     title: string;
     dayId: string;
     start: string;
@@ -47,13 +50,14 @@ function validateForm(formData: FormData): ValidationErrors {
 export default function EventFormModal(props: Props) {
 
     const emptyForm = ({ dayId, roomId, activityId, event }: Props) => ({
+        id: undefined,
         title: '',
         dayId: dayId ?? '',
         start: '',
-        durationInMinutes: 99,
+        durationInMinutes: JUSQUA_LA_FERMETURE.valueInMinutes,
         roomId: roomId ?? '',
         activityId: activityId ?? '',
-        tables: 99,
+        tables: TOUTE_LA_SALLE,
         description: '',
         ...(event ? event : {}),
     })

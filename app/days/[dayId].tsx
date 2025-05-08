@@ -89,7 +89,7 @@ export default function GameDayPage() {
                         <MaterialIcons name="location-on" size={20} />
                         <Text>{r.name}</Text>
                     </View>
-                    {day && <OccupationStats roomId={r.id} events={events} />}
+                    {day && <OccupationStats room={r} events={events} />}
                 </Card>))}
             </View>
         </ScrollView>}

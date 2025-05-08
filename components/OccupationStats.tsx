@@ -1,13 +1,14 @@
 import { AgendaEvent } from "@/model/AgendaEvent";
+import { Room } from "@/model/Room";
 import { roomService } from "@/services/RoomService";
 import { clamp } from "@/utils/Utils";
 import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
-export type Occupation = { hour: string, tables: number }
+export type Occupation = { hour: string, tables: number, availableTables: number }
 
 type Props = {
-    roomId: string;
+    room: Room;
     dayId?: string;
     events?: AgendaEvent[]
 }
@@ -18,24 +19,24 @@ export default function OccupationStats(props: Props) {
 
     useEffect(() => {
         if (props.events) {
-            roomService.getRoomOccupationStatsFromEvents(props.roomId, props.events)
+            roomService.getRoomOccupationStatsFromEvents(props.room, props.events)
                 .then(stats => {
                     setStats(stats)
                 })
         } else if (props.dayId) {
-            roomService.getRoomOccupationStats(props.roomId, props.dayId)
+            roomService.getRoomOccupationStats(props.room, props.dayId)
                 .then(stats => {
                     setStats(stats)
                 })
         }
 
-    }, [props.dayId, props.roomId, props.events]);
+    }, [props.dayId, props.room, props.events]);
 
     return <>
         {!stats || stats.filter(s => s.tables > 0).length === 0 ? <Text style={{ color: 'gray', alignSelf: 'center' }}>Disponible toute la journée</Text> :
             <ScrollView style={styles.container} horizontal={true}>
                 {stats && stats.map(st => (<View key={st.hour} style={{ flex: 1, alignItems: 'center' }}>
-                    <Text>{st.tables}</Text>
+                    <Text>{st.tables > 0 ? st.availableTables : null}</Text>
                     <View style={{ flex: 1, justifyContent: 'flex-end', width: 20 }}>
                         <View style={[styles.stat, { height: clamp(st.tables * 3, 0, 100) }]} />
                     </View>
