@@ -4,7 +4,7 @@ import { Months } from "@/constants/Months";
 import { GameDay } from "@/model/GameDay";
 import { calendarService } from "@/services/CalendarService";
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button, Pressable, SectionList, Text, View } from "react-native";
 
 export default function Agenda() {
@@ -30,10 +30,6 @@ export default function Agenda() {
                 return [...acc, { ...cur }];
             }
         }, []);
-
-    useEffect(() => {
-
-    }, [days])
 
     return (<View style={{ flex: 1 }}>
         <SectionList sections={sections}

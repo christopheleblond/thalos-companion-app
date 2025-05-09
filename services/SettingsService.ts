@@ -2,7 +2,7 @@ import { StorageKeys } from "@/constants/StorageKeys";
 import { User } from "@/model/User";
 import { UserPreferences } from "@/model/UserPreferences";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { API, ApiService } from "./Api";
+import { API, ApiService } from "../api/Api";
 
 class SettingsService {
 
@@ -15,7 +15,7 @@ class SettingsService {
             id: prefs.id,
             firstName: prefs.firstName,
             name: prefs.name,
-        } as User, prefs.isNew)
+        } as User)
 
         await AsyncStorage.setItem(StorageKeys.USER_PREFERENCES, JSON.stringify(prefs));
 

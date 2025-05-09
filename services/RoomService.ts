@@ -2,7 +2,7 @@ import { Occupation } from "@/components/OccupationStats";
 import { AgendaEvent } from "@/model/AgendaEvent";
 import { Room } from "@/model/Room";
 import { clamp, eventIsActiveAt } from "@/utils/Utils";
-import { API, ApiService } from "./Api";
+import { API, ApiService } from "../api/Api";
 
 class RoomService {
 

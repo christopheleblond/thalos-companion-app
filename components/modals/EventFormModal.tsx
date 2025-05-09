@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/Colors";
 import { JUSQUA_LA_FERMETURE } from "@/constants/Durations";
 import { TOUTE_LA_SALLE } from "@/constants/Rooms";
 import { useUser } from "@/hooks/useUser";
@@ -6,7 +7,7 @@ import { agendaService } from "@/services/AgendaService";
 import { FormState, isFormValid, ValidationErrors, Validators } from "@/utils/FormUtils";
 import { isEmpty } from "@/utils/Utils";
 import { useEffect, useState } from "react";
-import { Alert } from "react-native";
+import { ActivityIndicator, Alert } from "react-native";
 import EventForm from "../forms/EventForm";
 import ModalPage, { ModalAction, ModalPageProps } from "../ModalPage";
 
@@ -96,12 +97,14 @@ export default function EventFormModal(props: Props) {
         {
             name: 'cancel',
             label: 'Annuler',
+            disabled: saving,
             color: 'gray',
             onPress: () => props.closeFunction ? props.closeFunction() : console.error('No close function defined')
         },
         {
             name: 'save',
             label: 'Enregistrer',
+            disabled: saving,
             onPress: () => {
                 setFormState({ ...formState, submitted: true })
                 if (isFormValid(errors)) {
@@ -119,6 +122,7 @@ export default function EventFormModal(props: Props) {
     }, [formData])
 
     return (<ModalPage {...props} onShow={resetForm} options={{ title: props.title || 'Créer', actions: ACTIONS }}>
-        <EventForm formData={formData} errors={errors} state={formState} onChange={newFormData => setFormData(newFormData)} disabled={saving} />
+        {saving ? <ActivityIndicator color={Colors.red} size={50} /> : null}
+        {!saving ? <EventForm formData={formData} errors={errors} state={formState} onChange={newFormData => setFormData(newFormData)} disabled={saving} /> : null}
     </ModalPage>)
 }

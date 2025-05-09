@@ -5,6 +5,7 @@ export type ModalAction = {
     name: string,
     label?: string,
     color?: string,
+    disabled?: boolean,
     onPress: () => void
 }
 
@@ -28,7 +29,7 @@ export default function ModalPage(props: ModalPageProps) {
                 </View>
                 <View style={styles.modalFooter}>
                     {props.options?.actions && props.options?.actions?.map(action => (<View key={action.name} style={styles.modalAction}>
-                        <Button title={action.label ?? action.name} color={action.color ?? Colors.red} onPress={action.onPress} />
+                        <Button disabled={action.disabled} title={action.label ?? action.name} color={action.color ?? Colors.red} onPress={action.onPress} />
                     </View>))}
                 </View>
             </View>

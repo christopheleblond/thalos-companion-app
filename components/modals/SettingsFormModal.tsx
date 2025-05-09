@@ -1,6 +1,6 @@
-import { useUserId } from "@/hooks/useUserId";
 import { UserPreferences } from "@/model/UserPreferences";
 import { settingsService } from "@/services/SettingsService";
+import { userService } from "@/services/UserService";
 import { FormState, isFormValid, ValidationErrors } from "@/utils/FormUtils";
 import { isEmpty } from "@/utils/Utils";
 import { useEffect, useState } from "react";
@@ -24,18 +24,20 @@ export default function SettingsFormModal(props: Props) {
     const [formState, setFormState] = useState<FormState>({ submitted: false });
     const [errors, setErrors] = useState<ValidationErrors>({});
     const [saving, setSaving] = useState(false)
-    const userId = useUserId()
 
     useEffect(() => {
-        settingsService.get()
-            .then(prefs => {
-                if (prefs === null) {
-                    setUserPreferences({ id: userId, name: '', firstName: '', isNew: true } as UserPreferences)
-                } else {
-                    setUserPreferences(prefs)
-                }
+        userService.getUserId()
+            .then(userId => {
+                settingsService.get()
+                    .then(prefs => {
+                        if (prefs === null) {
+                            setUserPreferences({ id: userId, name: '', firstName: '', isNew: true } as UserPreferences)
+                        } else {
+                            setUserPreferences(prefs)
+                        }
+                    })
             })
-    }, [userId])
+    }, [])
 
     useEffect(() => {
         const errors = validateForm(userPreferences);

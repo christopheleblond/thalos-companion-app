@@ -5,7 +5,8 @@ import { AgendaEvent } from "@/model/AgendaEvent";
 import { agendaService } from "@/services/AgendaService";
 import { printGameDay } from "@/utils/Utils";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { useState } from "react";
+import { ActivityIndicator, Alert, Dimensions, Pressable, StyleSheet, Text, View } from "react-native";
 import Card, { CardProps } from "./Card";
 import IconButton from "./IconButton";
 
@@ -20,6 +21,8 @@ type Props = CardProps & {
 
 export default function AgendaEventCard({ style, event, ...rest }: Props) {
 
+    const [loading, setLoading] = useState(false)
+
     const confirmDeleteEvent = (event: Partial<AgendaEvent>) => {
         Alert.alert(`Supprimer l'évènement ${event.title} ?`, "",
             [
@@ -32,8 +35,14 @@ export default function AgendaEventCard({ style, event, ...rest }: Props) {
                 {
                     text: 'Supprimer',
                     onPress: () => {
+                        setLoading(true)
                         agendaService.deleteEvent(event.id!)
-                            .then(rest.onDelete ? rest.onDelete : null)
+                            .then(() => {
+                                if (rest.onDelete) {
+                                    rest.onDelete()
+                                }
+                                setLoading(false);
+                            })
                     }
                 }
             ]);
@@ -41,7 +50,13 @@ export default function AgendaEventCard({ style, event, ...rest }: Props) {
 
     const duration = event.durationInMinutes ? durationToString(event.durationInMinutes) : null;
 
+    const { width, height } = Dimensions.get('window');
+
     return <Card style={{ borderLeftWidth: 10, borderLeftColor: event.activity?.style.backgroundColor }}>
+        {loading ? <View style={[styles.backdropContainer, { width, height }]}>
+            <View style={[styles.backdrop, { width, height }]}></View>
+            <ActivityIndicator style={{ flex: 1, zIndex: 3 }} color={Colors.red} size={100} />
+        </View> : null}
         <Pressable onPress={rest.onPress} style={[styles.container, {}, style]}>
             {/* TAG Activité */}
             {event.activity ? <View style={[styles.activity, { backgroundColor: event.activity.style.backgroundColor, alignSelf: 'flex-start' }]}>
@@ -145,5 +160,15 @@ const styles = StyleSheet.create({
     buttons: {
         flexDirection: 'row',
         alignSelf: 'flex-end'
+    },
+    backdropContainer: {
+        position: 'absolute',
+        zIndex: 2,
+    },
+    backdrop: {
+        position: 'absolute',
+        zIndex: 2,
+        backgroundColor: Colors.black,
+        opacity: 0.5
     }
 })

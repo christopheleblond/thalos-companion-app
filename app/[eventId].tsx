@@ -25,12 +25,15 @@ export default function AgendaEventPage() {
     useEffect(() => {
         agendaService.findEventById(params.eventId)
             .then(e => {
-                setEvent(e);
+                if (e === null) {
+                    console.error('No event found with id ', params.eventId)
+                } else {
+                    setEvent(e);
+                }
             })
     }, [params.eventId, refresh])
 
     return (<View style={styles.container}>
-
         <EventFormModal event={event} title="Modifier" visible={editMode} closeFunction={() => setEditMode(false)} onSuccess={() => {
             setRefresh(new Date().toISOString());
             appContext.refresh('home.events');
