@@ -1,21 +1,25 @@
 import { AgendaEvent } from "@/model/AgendaEvent";
-import { fromActivityId, fromGameDayId, fromRoomId, getEndTime, getStartTime } from "@/utils/Utils";
-import { API, ApiService } from "./Api";
+import { fromGameDayId, getEndTime, getStartTime } from "@/utils/Utils";
+import { API, ApiService } from "../api/Api";
 
 class AgendaService {
 
     constructor(private api: ApiService) { }
 
-    findEventById(eventId: string): Promise<AgendaEvent> {
+    sortEvents(events: AgendaEvent[]): AgendaEvent[] {
+        return events.sort((a, b) => a.startTime! - b.startTime!)
+    }
+
+    findEventById(eventId: string): Promise<AgendaEvent | null> {
         return this.api.findEventById(eventId);
     }
 
     findEventsOfDay(dayId: string): Promise<AgendaEvent[]> {
-        return this.api.findEventsByDayId(dayId);
+        return this.api.findEventsByDayId(dayId).then(this.sortEvents);;
     }
 
     findAllEvents(): Promise<AgendaEvent[]> {
-        return this.api.findAllEvents();
+        return this.api.findAllEvents().then(this.sortEvents);
     }
 
     saveEvent(event: Partial<AgendaEvent>): Promise<AgendaEvent> {
@@ -25,9 +29,6 @@ class AgendaService {
         }
         const enriched = {
             ...event,
-            day,
-            activity: fromActivityId(event.activityId),
-            room: fromRoomId(event.roomId),
             startTime: getStartTime(day!, event.start!),
             endTime: getEndTime(day!, event.start!, event.durationInMinutes)
         } as Partial<AgendaEvent>;

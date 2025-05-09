@@ -1,4 +1,5 @@
-import { Room } from "@/model/Models";
+import { Room } from "@/model/Room"
+
 
 export const ROOMS: Room[] = [
     {
@@ -27,5 +28,6 @@ export const ROOMS: Room[] = [
     }
 ]
 
+export const TOUTE_LA_SALLE = 999
 
-export const TABLES = [99, 1, 2, 3, 4, 5, 6, 8]
+export const TABLES = [TOUTE_LA_SALLE, 1, 2, 3, 4, 5, 6, 8]

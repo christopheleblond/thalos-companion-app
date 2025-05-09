@@ -5,6 +5,7 @@ import { AgendaEvent } from "@/model/AgendaEvent";
 import { Room } from "@/model/Room";
 import { User } from "@/model/User";
 import { fromActivityId, fromGameDayId, fromRoomId } from "@/utils/Utils";
+import { ApiService } from "./Api";
 
 const baseUrl = 'http://192.168.1.51:3000';
 
@@ -25,8 +26,7 @@ export const userMapper = (json: any): User => {
     } as User;
 }
 
-export class ApiService {
-
+class MockServerApi implements ApiService {
     constructor(private readonly activities: Activity[], private readonly rooms: Room[]) {
     }
 
@@ -49,8 +49,8 @@ export class ApiService {
             })
     }
 
-    saveOrUpdateUser(user: User, isNew = false): Promise<User> {
-        if (isNew) {
+    saveOrUpdateUser(user: User): Promise<User> {
+        if (!user.id) {
             return fetch(`${baseUrl}/users`, {
                 method: 'POST', body: JSON.stringify(user), headers: {
                     'Content-Type': 'application/json'
@@ -67,7 +67,7 @@ export class ApiService {
         }
     }
 
-    findEventById(eventId: string): Promise<AgendaEvent> {
+    findEventById(eventId: string): Promise<AgendaEvent | null> {
         console.log('findEventById() ', eventId);
         return fetch(`${baseUrl}/events?id=${eventId}`, { method: 'GET' })
             .then(resp => resp.json())
@@ -89,7 +89,8 @@ export class ApiService {
     findAllEvents(): Promise<AgendaEvent[]> {
         console.log('findAllEvents()')
         return fetch(`${baseUrl}/events`, { method: 'GET' })
-            .then(resp => resp.json()).then(json => json.map((it: any) => agendaEventMapper(it, this.rooms, this.activities)))
+            .then(resp => resp.json())
+            .then(json => json.map((it: any) => agendaEventMapper(it, this.rooms, this.activities)))
     }
 
     saveEvent(event: Partial<AgendaEvent>): Promise<AgendaEvent> {
@@ -118,4 +119,4 @@ export class ApiService {
     }
 }
 
-export const API = new ApiService(ACTIVITIES, ROOMS)
+export const mockServerApi = new MockServerApi(ACTIVITIES, ROOMS);

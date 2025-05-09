@@ -1,6 +1,6 @@
 import { AgendaEvent } from "@/model/AgendaEvent"
 import { GameDay } from "@/model/GameDay"
-import { eventIsInTimeSlot, getEndTime, getStartTime, isEmpty, isNotEmpty } from "./Utils"
+import { eventIsInTimeSlot, getEndTime, getStartTime, getWeekNumber, isEmpty, isNotEmpty } from "./Utils"
 
 describe('Utils.isEmpty() tests', () => {
     it('isEmpty should return true when empty string', () => {
@@ -33,16 +33,16 @@ describe('Utils.isNotEmpty() tests', () => {
 describe('Start & end Time tests', () => {
     it('Utils.getStartTime()', () => {
         const startTime = getStartTime({
-                date: new Date('2025-01-01')
-            } as GameDay, '15h');
+            date: new Date('2025-01-01')
+        } as GameDay, '15h');
         expect(new Date(startTime).toISOString()).toBe('2025-01-01T15:00:00.000Z')
-        expect(startTime).toBe(1735743600000); 
+        expect(startTime).toBe(1735743600000);
     })
 
     it('Utils.getEndTime()', () => {
         const endTime = getEndTime({
-                date: new Date('2025-01-01')
-            } as GameDay,
+            date: new Date('2025-01-01')
+        } as GameDay,
             '15h',
             120)
 
@@ -57,7 +57,7 @@ describe('Event is in time slot tests', () => {
             startTime: new Date('2025-06-01T15:00:00Z').getTime(),
             endTime: new Date('2025-06-01T17:00:00Z').getTime(),
         } as AgendaEvent;
-        expect(eventIsInTimeSlot(event, new Date('2025-06-01T12:00:00Z').getTime(),new Date('2025-06-01T14:00:00Z').getTime())).toBeFalsy();
+        expect(eventIsInTimeSlot(event, new Date('2025-06-01T12:00:00Z').getTime(), new Date('2025-06-01T14:00:00Z').getTime())).toBeFalsy();
     })
 
     it('Event is before of time slot', () => {
@@ -65,7 +65,7 @@ describe('Event is in time slot tests', () => {
             startTime: new Date('2025-06-01T15:00:00Z').getTime(),
             endTime: new Date('2025-06-01T17:00:00Z').getTime(),
         } as AgendaEvent;
-        expect(eventIsInTimeSlot(event, new Date('2025-06-01T17:00:00Z').getTime(),new Date('2025-06-01T19:00:00Z').getTime())).toBeFalsy();
+        expect(eventIsInTimeSlot(event, new Date('2025-06-01T17:00:00Z').getTime(), new Date('2025-06-01T19:00:00Z').getTime())).toBeFalsy();
     })
 
     it('Event is completly in the time slot', () => {
@@ -73,7 +73,7 @@ describe('Event is in time slot tests', () => {
             startTime: new Date('2025-06-01T15:00:00Z').getTime(),
             endTime: new Date('2025-06-01T19:00:00Z').getTime(),
         } as AgendaEvent;
-        expect(eventIsInTimeSlot(event, new Date('2025-06-01T15:00:00Z').getTime(),new Date('2025-06-01T17:00:00Z').getTime())).toBeTruthy();
+        expect(eventIsInTimeSlot(event, new Date('2025-06-01T15:00:00Z').getTime(), new Date('2025-06-01T17:00:00Z').getTime())).toBeTruthy();
     })
 
     it('Event is partially in the time slot', () => {
@@ -81,7 +81,7 @@ describe('Event is in time slot tests', () => {
             startTime: new Date('2025-06-01T14:00:00Z').getTime(),
             endTime: new Date('2025-06-01T16:00:00Z').getTime(),
         } as AgendaEvent;
-        expect(eventIsInTimeSlot(event, new Date('2025-06-01T15:00:00Z').getTime(),new Date('2025-06-01T17:00:00Z').getTime())).toBeTruthy();
+        expect(eventIsInTimeSlot(event, new Date('2025-06-01T15:00:00Z').getTime(), new Date('2025-06-01T17:00:00Z').getTime())).toBeTruthy();
     })
 
     it('Event is partially in the time slot', () => {
@@ -89,6 +89,13 @@ describe('Event is in time slot tests', () => {
             startTime: new Date('2025-06-01T16:00:00Z').getTime(),
             endTime: new Date('2025-06-01T19:00:00Z').getTime(),
         } as AgendaEvent;
-        expect(eventIsInTimeSlot(event, new Date('2025-06-01T15:00:00Z').getTime(),new Date('2025-06-01T17:00:00Z').getTime())).toBeTruthy();
+        expect(eventIsInTimeSlot(event, new Date('2025-06-01T15:00:00Z').getTime(), new Date('2025-06-01T17:00:00Z').getTime())).toBeTruthy();
+    })
+})
+
+describe('getWeekNumber tests', () => {
+    it('getWeekNumber', () => {
+        expect(getWeekNumber(new Date('2025-11-04'))).toBe(45)
+        expect(getWeekNumber(new Date('2025-04-11'))).toBe(15)
     })
 })

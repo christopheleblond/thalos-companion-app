@@ -3,13 +3,16 @@ import IconButton from "@/components/IconButton";
 import EventFormModal from "@/components/modals/EventFormModal";
 import SettingsFormModal from "@/components/modals/SettingsFormModal";
 import { Colors } from "@/constants/Colors";
+import { Months } from "@/constants/Months";
 import { AgendaEvent } from "@/model/AgendaEvent";
 import { agendaService } from "@/services/AgendaService";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useRouter } from "expo-router";
 import { useContext, useEffect, useState } from "react";
-import { FlatList, Image, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { Image, SafeAreaView, SectionList, StyleSheet, Text, View } from "react-native";
 import { AppContext } from "./_layout";
+
+type SectionListItem = { title: string, data: AgendaEvent[] }
 
 export default function Main() {
 
@@ -21,20 +24,37 @@ export default function Main() {
     const router = useRouter();
     const [events, setEvents] = useState<AgendaEvent[]>([]);
     const [loading, setLoading] = useState(false)
+    const [sections, setSections] = useState<SectionListItem[]>([])
 
     const needARefresh = appContext.refreshs['home.events']
 
     useEffect(() => {
         setLoading(true)
         agendaService.findAllEvents().then(events => {
+            console.log('Event found', events)
             setEvents(events)
+            const eventsByMonth = events
+                .map(e => ({ title: Months[e.day.date.getMonth()].toUpperCase(), data: [e] }))
+                .reduce((acc: SectionListItem[], cur: SectionListItem) => {
+                    const foundIndex = acc.findIndex(i => i.title === cur.title)
+                    if (foundIndex >= 0) {
+                        acc[foundIndex].data.push(cur.data[0])
+                    } else {
+                        acc.push(cur)
+                    }
+                    return acc;
+                }, [])
+            setSections(eventsByMonth)
+            setLoading(false)
+        }).catch(error => {
+            console.error('Fail on findAllEvents', error)
             setLoading(false)
         })
     }, [needARefresh])
 
     return (<SafeAreaView style={styles.container}>
 
-        <SettingsFormModal visible={settingsModalVisible} closeFunction={() => setSettingsModalVisible(false)} onSuccess={(prefs) => { }} />
+        {<SettingsFormModal visible={settingsModalVisible} closeFunction={() => setSettingsModalVisible(false)} onSuccess={(prefs) => { }} />}
         <EventFormModal visible={eventFormModalVisible} closeFunction={() => setEventFormModalVisible(false)} onSuccess={(event) => {
             appContext.refresh(`home.events`)
             appContext.refresh(`agenda.${event?.day.id}`)
@@ -49,11 +69,12 @@ export default function Main() {
         </View>
 
         <View style={styles.body}>
-            <FlatList
-                data={events}
+            <SectionList
+                sections={sections}
                 onRefresh={() => appContext.refresh('home.events')}
                 refreshing={loading}
                 keyExtractor={item => item.id}
+                renderSectionHeader={(item) => <Text style={styles.sectionMonth}>{item.section.title}</Text>}
                 ListEmptyComponent={() => <View style={styles.emptyList}>
                     <MaterialIcons name={'close'} color={'gray'} size={50} />
                     <Text>Aucun évènement prévu.</Text>
@@ -114,6 +135,13 @@ const styles = StyleSheet.create({
         paddingVertical: 30,
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    sectionMonth: {
+        textTransform: 'uppercase',
+        fontSize: 20,
+        fontWeight: 'bold',
+        alignSelf: 'center',
+        color: Colors.gray
     }
 })
 

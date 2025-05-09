@@ -1,13 +1,16 @@
 import { ACTIVITIES } from "@/constants/Activities";
 import { Colors } from "@/constants/Colors";
 import { Durations } from "@/constants/Durations";
-import { ROOMS, TABLES } from "@/constants/Rooms";
+import { ROOMS, TABLES, TOUTE_LA_SALLE } from "@/constants/Rooms";
 import { Room } from "@/model/Room";
+import { agendaService } from "@/services/AgendaService";
 import { calendarService } from "@/services/CalendarService";
 import { CustomFormProps, hasError } from "@/utils/FormUtils";
-import { printGameDay } from "@/utils/Utils";
+import { clamp, eventIsInTimeSlot, fromGameDayId, getEndTime, getStartTime, printGameDay } from "@/utils/Utils";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
+import IconButton from "../IconButton";
 import { FormData } from "../modals/EventFormModal";
 import CustomSelect from "./CustomSelect";
 import FormInputText from "./FormInputText";
@@ -16,14 +19,24 @@ export function RoomSelectOption({ room, remainingTables }: { room: Room, remain
 
     return <>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text style={styles.optionText}>{room.name}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
-                <Text style={styles.optionText}>{remainingTables}
-                </Text>
+                {remainingTables === 0 ? <IconButton icon="warning" color={Colors.red} size={20} /> : null}
+                <Text style={[styles.optionText, remainingTables === 0 ? { color: Colors.red } : null]}>{room.name}</Text>
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
+                <Text style={[styles.optionText, remainingTables === 0 ? { color: Colors.red } : null]}>{remainingTables}</Text>
                 <MaterialIcons name="table-restaurant" />
             </View>
+
         </View>
+        {remainingTables === 0 ? <View>
+            <Text style={styles.optionRoomFull}>Plus de table de disponible !</Text>
+        </View> : null}
     </>
+}
+
+type RemaingTables = {
+    [roomId: string]: number;
 }
 
 export default function EventForm(props: CustomFormProps<FormData>) {
@@ -31,6 +44,46 @@ export default function EventForm(props: CustomFormProps<FormData>) {
     const days = calendarService.buildDaysFromDate(new Date(), 60);
     const hours = calendarService.hours();
     const durations = Durations;
+
+    const init = ROOMS.map(r => ({ [r.id]: r.capacity || TOUTE_LA_SALLE }))
+        .reduce((prev, cur) => {
+            const roomId = Object.keys(cur)[0]
+            const value = cur[roomId]
+            return {
+                ...prev,
+                [roomId]: value
+            }
+        }, {} as RemaingTables)
+
+    const [roomOccupations, setRoomOccupations] = useState<RemaingTables>(init)
+
+    useEffect(() => {
+        let currentOccupation = { ...init }
+        if (props.formData.dayId && props.formData.start && props.formData.durationInMinutes > 0) {
+            const day = fromGameDayId(props.formData.dayId)
+            const startTime = getStartTime(day!, props.formData.start)
+            const endTime = getEndTime(day!, props.formData.start, props.formData.durationInMinutes)
+            agendaService.findEventsOfDay(props.formData.dayId).then(events => {
+                console.log('events', events.map(e => e.id))
+                events
+                    .filter(e => e.id !== props.formData.id
+                        && eventIsInTimeSlot(e, startTime, endTime)
+                    )
+                    .forEach(event => {
+                        currentOccupation = {
+                            ...currentOccupation,
+                            [event.roomId!]: clamp((currentOccupation[event.roomId!] - (event.tables || 0)), 0, 100)
+                        }
+                    })
+                setRoomOccupations(currentOccupation)
+            })
+        }
+
+    }, [props.formData.id, props.formData.dayId, props.formData.start, props.formData.durationInMinutes])
+
+    const getRemainingTablesOfRoom = (room: Room) => {
+        return roomOccupations[room.id] ?? 0
+    }
 
     return <ScrollView>
         <FormInputText disabled={props.disabled}
@@ -80,14 +133,16 @@ export default function EventForm(props: CustomFormProps<FormData>) {
         />
         {props.state?.submitted && hasError(props.errors, 'activityIsEmpty') ? <Text style={styles.fieldError}>L&lsquo;activité principale est obligatoire</Text> : null}
 
-        <CustomSelect label="Salle"
+        {props.formData.dayId && props.formData.start && props.formData.durationInMinutes ? <CustomSelect label="Salle"
             data={ROOMS}
             getId={(r) => r.id}
             value={props.formData.roomId}
             onChange={(it) => props.onChange({ ...props.formData, roomId: it.id })}
-            renderOption={(it) => (<RoomSelectOption room={it} remainingTables={0} />)}
+            renderOptionText={(it) => (it.name)}
+            renderOption={(it) => (<RoomSelectOption room={it} remainingTables={getRemainingTablesOfRoom(it) ?? 0} />)}
+            isOptionDisabled={(it) => getRemainingTablesOfRoom(it) === 0}
             disabled={props.disabled}
-        />
+        /> : null}
         {props.state?.submitted && hasError(props.errors, 'roomIsEmpty') ? <Text style={styles.fieldError}>La salle est obligatoire</Text> : null}
 
         <CustomSelect label="Nombre de tables à réserver"
@@ -95,7 +150,7 @@ export default function EventForm(props: CustomFormProps<FormData>) {
             getId={(t) => t}
             value={props.formData.tables}
             onChange={(t) => props.onChange({ ...props.formData, tables: t })}
-            renderOptionText={(t) => t === 99 ? 'Toute la salle' : t + ' tables'}
+            renderOptionText={(t) => t === TOUTE_LA_SALLE ? 'Toute la salle' : t + ' tables'}
             disabled={props.disabled}
         />
 
@@ -114,5 +169,13 @@ const styles = StyleSheet.create({
     },
     optionText: {
         color: Colors.black
+    },
+    optionRoomFull: {
+        backgroundColor: Colors.red,
+        padding: 5,
+        marginTop: 5,
+        borderRadius: 50,
+        color: Colors.white,
+        alignContent: 'center'
     }
 })

@@ -1,9 +1,10 @@
 import GameDayCard from "@/components/GameDayCard";
+import { Colors } from "@/constants/Colors";
 import { Months } from "@/constants/Months";
 import { GameDay } from "@/model/GameDay";
 import { calendarService } from "@/services/CalendarService";
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button, Pressable, SectionList, Text, View } from "react-native";
 
 export default function Agenda() {
@@ -30,15 +31,11 @@ export default function Agenda() {
             }
         }, []);
 
-    useEffect(() => {
-
-    }, [days])
-
     return (<View style={{ flex: 1 }}>
         <SectionList sections={sections}
             keyExtractor={({ id }) => id}
             renderSectionHeader={(item) => <Text style={{ alignSelf: 'center' }}>{item.section.title}</Text>}
-            ListFooterComponent={() => <Button title="Voir plus ..." onPress={() => moreDays()}></Button>}
+            ListFooterComponent={() => <Button color={Colors.red} title="Voir plus ..." onPress={() => moreDays()}></Button>}
             renderItem={({ item }) => (<Pressable onPress={() => router.push(`/days/${item.id}`)}>
                 <GameDayCard day={item} />
             </Pressable>)}

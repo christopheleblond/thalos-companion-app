@@ -35,7 +35,7 @@ export const Validators = {
         return !!value && value.trim().length < minValue;
     },
 
-    allowedCharacters: (value: string, pattern: RegExp = /^[a-zA-Z0-9_@#*]+$/) => {
+    allowedCharacters: (value: string, pattern: RegExp = /^[a-zA-Z0-9_@#*\ ]+$/) => {
         return !!value && pattern.test(value.trim())
     },
 
