@@ -64,7 +64,6 @@ export default function EventForm(props: CustomFormProps<FormData>) {
             const startTime = getStartTime(day!, props.formData.start)
             const endTime = getEndTime(day!, props.formData.start, props.formData.durationInMinutes)
             agendaService.findEventsOfDay(props.formData.dayId).then(events => {
-                console.log('events', events.map(e => e.id))
                 events
                     .filter(e => e.id !== props.formData.id
                         && eventIsInTimeSlot(e, startTime, endTime)

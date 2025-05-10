@@ -33,7 +33,6 @@ export function useUser(): User | null {
                 .then(user => {
                     appContext.setUser(user)
                     setUser(user)
-                    console.log('Set User in context', user)
                 })
         }
     }, [])

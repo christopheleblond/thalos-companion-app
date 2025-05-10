@@ -9,10 +9,8 @@ export function useUserId(): string {
     const [userId, setUserId] = useState<string>('')
 
     useEffect(() => {
-        console.log('UseEffect To get userId')
         localUserId.getItem()
             .then(value => {
-                console.log('GetItem', value)
                 if (value === null) {
                     const newId = uuid()
                     return localUserId.setItem(newId)
@@ -23,12 +21,9 @@ export function useUserId(): string {
             })
             .then(id => {
                 setUserId(id)
-                console.log('Set User id = ', id)
             })
             .catch(error => console.error('Get Item error', error))
     })
-
-    console.log('Return userId', userId)
 
     return userId;
 }
