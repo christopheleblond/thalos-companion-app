@@ -22,7 +22,6 @@ export default function Main() {
     const [eventFormModalVisible, setEventFormModalVisible] = useState(false);
 
     const router = useRouter();
-    const [events, setEvents] = useState<AgendaEvent[]>([]);
     const [loading, setLoading] = useState(false)
     const [sections, setSections] = useState<SectionListItem[]>([])
 
@@ -31,8 +30,6 @@ export default function Main() {
     useEffect(() => {
         setLoading(true)
         agendaService.findAllEvents().then(events => {
-            console.log('Event found', events)
-            setEvents(events)
             const eventsByMonth = events
                 .map(e => ({ title: Months[e.day.date.getMonth()].toUpperCase(), data: [e] }))
                 .reduce((acc: SectionListItem[], cur: SectionListItem) => {
