@@ -35,6 +35,13 @@ class SettingsService {
             return Promise.resolve(null)
         }
     }
+
+    activityVisible(prefs: UserPreferences | null, activityId: string): boolean {
+        if (prefs === null) {
+            return true;
+        }
+        return (!!prefs.activities && (!prefs.activities[activityId] || prefs.activities[activityId] === 'yes'));
+    }
 }
 
 export const settingsService = new SettingsService(API);

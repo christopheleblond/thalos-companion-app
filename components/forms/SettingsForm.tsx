@@ -38,6 +38,8 @@ export default function SettingsForm(props: CustomFormProps<UserPreferences>) {
         })
     }
 
+    const activities = ACTIVITIES.filter(a => a.filterable).sort((a, b) => a.name.localeCompare(b.name))
+
     return <ScrollView>
 
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -60,7 +62,7 @@ export default function SettingsForm(props: CustomFormProps<UserPreferences>) {
 
         <View>
             <Text>Activités</Text>
-            {ACTIVITIES.map(act => (
+            {activities.map(act => (
                 <Radio key={act.id}
                     label={act.name}
                     options={[{ value: 'yes', label: 'Oui' } as ActivityOption, { value: 'no', label: 'Non' } as ActivityOption]}

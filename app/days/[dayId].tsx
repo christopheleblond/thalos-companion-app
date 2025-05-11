@@ -1,6 +1,7 @@
 import AgendaEventCard from "@/components/AgendaEventCard";
 import Card from "@/components/Card";
 import IconButton from "@/components/IconButton";
+import CountingFormModal from "@/components/modals/CountingFormModal";
 import EventFormModal from "@/components/modals/EventFormModal";
 import OccupationStats from "@/components/OccupationStats";
 import RoomPriorities from "@/components/RoomPriorities";
@@ -29,6 +30,7 @@ export default function GameDayPage() {
     const [events, setEvents] = useState<AgendaEvent[]>([]);
     const [loading, setLoading] = useState(false);
     const [eventFormModalVisible, setEventFormModalVisible] = useState(false);
+    const [countingFormModalVisible, setCountingFormModalVisible] = useState(false);
 
     const goPrevious = () => {
         router.replace(`/days/${previousDay?.id}`)
@@ -71,21 +73,31 @@ export default function GameDayPage() {
                 appContext.refresh(`agenda.${event?.day.id}`)
             }} />
 
+        {day ? <CountingFormModal dayId={day?.id} title={`Comptage : ${printGameDay(day)}`} visible={countingFormModalVisible} closeFunction={() => setCountingFormModalVisible(false)} onSuccess={() => setCountingFormModalVisible(false)} /> : null}
+
         <View key="1" style={{ flexDirection: 'row', alignSelf: 'center' }}>
             <IconButton icon="arrow-left" color="gray" onPress={() => goPrevious()} />
             {day ? <Text style={styles.dayText}>{printGameDay(day)}</Text> : null}
             <IconButton icon="arrow-right" color="gray" onPress={() => goNext()} />
         </View>
-        {loading ? <ActivityIndicator color={Colors.red} size={50} /> : <ScrollView style={{ flex: 1 / 2 }}>
+        {loading ? <View style={{ flex: 1, justifyContent: 'center' }}><ActivityIndicator color={Colors.red} size={50} /></View> : <ScrollView style={{ flex: 1 / 2 }}>
             {events?.length === 0 ? <View style={{ padding: 50, alignItems: 'center' }}>
                 <Text>Rien de prévu pour l&lsquo;instant</Text>
             </View> : events.map(e => (<AgendaEventCard key={e.id} event={e} onPress={() => router.push(`/${e.id}`)} />))}
             <View style={{ flexDirection: 'row', padding: 10, alignSelf: 'center', backgroundColor: Colors.red, borderRadius: 50 }}>
                 <IconButton icon="add" size={50} color={'white'} onPress={() => setEventFormModalVisible(true)} />
+                <IconButton icon="pin" size={50} color={'white'} onPress={() => setCountingFormModalVisible(true)} />
             </View>
             <View>
-                <Text>Occupation des salles</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'center', paddingTop: 10 }}>
+                    <MaterialIcons name="home" size={20} color={Colors.gray} />
+                    <Text style={styles.subtitle}>Occupation des salles</Text>
+                </View>
                 {day ? <RoomPriorities day={day} /> : null}
+                <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'center', paddingTop: 10 }}>
+                    <MaterialIcons name="table-restaurant" size={20} color={Colors.gray} />
+                    <Text style={styles.subtitle}>Nombre de tables utilisées</Text>
+                </View>
                 {ROOMS.map(r => (<Card key={r.id}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <MaterialIcons name="location-on" size={20} />
@@ -105,5 +117,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 20,
         borderBottomWidth: 1
+    },
+    subtitle: {
+        color: Colors.gray,
+        textTransform: 'uppercase',
+        fontWeight: 'bold'
     }
 })

@@ -6,6 +6,7 @@ import { Colors } from "@/constants/Colors";
 import { Months } from "@/constants/Months";
 import { AgendaEvent } from "@/model/AgendaEvent";
 import { agendaService } from "@/services/AgendaService";
+import { settingsService } from "@/services/SettingsService";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useRouter } from "expo-router";
 import { useContext, useEffect, useState } from "react";
@@ -29,29 +30,36 @@ export default function Main() {
 
     useEffect(() => {
         setLoading(true)
-        agendaService.findAllEvents().then(events => {
-            const eventsByMonth = events
-                .map(e => ({ title: Months[e.day.date.getMonth()].toUpperCase(), data: [e] }))
-                .reduce((acc: SectionListItem[], cur: SectionListItem) => {
-                    const foundIndex = acc.findIndex(i => i.title === cur.title)
-                    if (foundIndex >= 0) {
-                        acc[foundIndex].data.push(cur.data[0])
-                    } else {
-                        acc.push(cur)
-                    }
-                    return acc;
-                }, [])
-            setSections(eventsByMonth)
-            setLoading(false)
-        }).catch(error => {
-            console.error('Fail on findAllEvents', error)
-            setLoading(false)
-        })
+        settingsService.get()
+            .then(prefs => agendaService.findAllEvents()
+                .then(events => ({ events, prefs })))
+            .then(({ events, prefs }) => {
+                const eventsByMonth = events
+                    .filter(e => settingsService.activityVisible(prefs, e.activityId ?? e.activity?.id ?? ''))
+                    .map(e => ({ title: Months[e.day.date.getMonth()].toUpperCase(), data: [e] }))
+                    .reduce((acc: SectionListItem[], cur: SectionListItem) => {
+                        const foundIndex = acc.findIndex(i => i.title === cur.title)
+                        if (foundIndex >= 0) {
+                            acc[foundIndex].data.push(cur.data[0])
+                        } else {
+                            acc.push(cur)
+                        }
+                        return acc;
+                    }, [])
+                setSections(eventsByMonth)
+                setLoading(false)
+            }).catch(error => {
+                console.error('Fail on findAllEvents', error)
+                setLoading(false)
+            })
     }, [needARefresh])
 
     return (<SafeAreaView style={styles.container}>
 
-        {<SettingsFormModal visible={settingsModalVisible} closeFunction={() => setSettingsModalVisible(false)} onSuccess={(prefs) => { }} />}
+        {<SettingsFormModal visible={settingsModalVisible} closeFunction={() => setSettingsModalVisible(false)} onSuccess={(prefs) => {
+            appContext.refresh(`home.events`)
+            appContext.refresh(`agenda`)
+        }} />}
         <EventFormModal visible={eventFormModalVisible} closeFunction={() => setEventFormModalVisible(false)} onSuccess={(event) => {
             appContext.refresh(`home.events`)
             appContext.refresh(`agenda.${event?.day.id}`)
@@ -62,7 +70,9 @@ export default function Main() {
                 <Image source={require('@/assets/images/icon50.png')} width={50} height={24} />
                 <Text style={{ color: 'white', fontWeight: 'bold', paddingLeft: 5, fontSize: 20, fontFamily: 'Flowers' }} >La Voie du Thalos</Text>
             </View>
-            <IconButton icon="settings" onPress={() => setSettingsModalVisible(true)} />
+            <View style={{ borderRadius: 50, elevation: 2 }}>
+                <IconButton icon="settings" color={Colors.white} onPress={() => setSettingsModalVisible(true)} />
+            </View>
         </View>
 
         <View style={styles.body}>
@@ -96,7 +106,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 12,
+        padding: 8
     },
     headerLeft: {
         flexDirection: 'row',
@@ -107,7 +117,7 @@ const styles = StyleSheet.create({
     },
     body: {
         flex: 1,
-        marginHorizontal: 10,
+        marginHorizontal: 5,
         borderRadius: 5,
         elevation: 2,
         backgroundColor: 'whitesmoke'

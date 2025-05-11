@@ -28,6 +28,10 @@ class UserService {
     createUser(user: User): Promise<User> {
         return this.api.saveOrUpdateUser(user)
     }
+
+    findAllUsers(): Promise<User[]> {
+        return this.api.findAllUsers();
+    }
 }
 
 export const userService = new UserService(API)

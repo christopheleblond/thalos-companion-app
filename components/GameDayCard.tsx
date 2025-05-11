@@ -3,6 +3,7 @@ import { Colors } from "@/constants/Colors";
 import { AgendaEvent } from "@/model/AgendaEvent";
 import { GameDay } from "@/model/GameDay";
 import { agendaService } from "@/services/AgendaService";
+import { settingsService } from "@/services/SettingsService";
 import { printGameDay } from "@/utils/Utils";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useContext, useEffect, useState } from "react";
@@ -19,13 +20,14 @@ export default function GameDayCard({ day, ...props }: Props) {
     const [events, setEvents] = useState<AgendaEvent[]>([])
     const [loading, setLoading] = useState(false);
 
-    const needARefresh = appContext.refreshs[`agenda.${day.id}`];
+    const needARefresh = appContext.refreshs[`agenda`] || appContext.refreshs[`agenda.${day.id}`];
 
     useEffect(() => {
         setLoading(true);
-        agendaService.findEventsOfDay(day.id)
-            .then(events => {
-                setEvents(events)
+        settingsService.get().then(prefs => agendaService.findEventsOfDay(day.id).then(events => ({ events, prefs })))
+            .then(({ events, prefs }) => {
+                const filteredEvents = events.filter(e => settingsService.activityVisible(prefs, e.activityId ?? ''))
+                setEvents(filteredEvents)
                 setLoading(false)
             }).catch(error => {
                 console.error(error);

@@ -75,6 +75,10 @@ export default function RootLayout() {
         title: 'Agenda',
         tabBarIcon: () => (<MaterialIcons size={24} name={'calendar-month'} />)
       }} />
+      <Tabs.Screen name="keys" options={{
+        title: 'Badges',
+        tabBarIcon: () => (<MaterialIcons size={24} name={'key'} />)
+      }} />
       <Tabs.Screen name="[eventId]" options={{
         href: null
       }} />

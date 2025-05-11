@@ -75,7 +75,7 @@ export default function AgendaEventCard({ style, event, ...rest }: Props) {
 
             {/* Nom */}
             <View style={styles.title}>
-                <Text style={{ fontSize: 30 }}>{event.title}</Text>
+                <Text style={{ fontSize: (event.title && event.title?.length < 15 ? 30 : event.title && event?.title?.length < 20 ? 25 : 20) }}>{event.title}</Text>
             </View>
 
             {/* Creator */}

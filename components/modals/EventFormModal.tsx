@@ -7,7 +7,7 @@ import { agendaService } from "@/services/AgendaService";
 import { FormState, isFormValid, ValidationErrors, Validators } from "@/utils/FormUtils";
 import { isEmpty } from "@/utils/Utils";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Alert } from "react-native";
+import { ActivityIndicator, Alert, View } from "react-native";
 import EventForm from "../forms/EventForm";
 import ModalPage, { ModalAction, ModalPageProps } from "../ModalPage";
 
@@ -38,7 +38,7 @@ function validateForm(formData: FormData): ValidationErrors {
     return {
         nameIsEmpty: isEmpty(formData.title),
         nameIsLower: Validators.min(formData.title, 3),
-        nameIsHigher: Validators.max(formData.title, 20),
+        nameIsHigher: Validators.max(formData.title, 40),
         nameIsInvalid: !Validators.allowedCharacters(formData.title),
         dateIsEmpty: isEmpty(formData.dayId),
         dateIsPassed: Validators.dateIsPassed(new Date(formData.dayId)),
@@ -122,7 +122,7 @@ export default function EventFormModal(props: Props) {
     }, [formData])
 
     return (<ModalPage {...props} onShow={resetForm} options={{ title: props.title || 'Créer', actions: ACTIONS }}>
-        {saving ? <ActivityIndicator color={Colors.red} size={50} /> : null}
+        {saving ? <View style={{ flex: 1, justifyContent: 'center' }}><ActivityIndicator color={Colors.red} size={50} /></View> : null}
         {!saving ? <EventForm formData={formData} errors={errors} state={formState} onChange={newFormData => setFormData(newFormData)} disabled={saving} /> : null}
     </ModalPage>)
 }

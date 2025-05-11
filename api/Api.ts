@@ -1,4 +1,6 @@
 import { AgendaEvent } from "@/model/AgendaEvent";
+import { DayCounts } from "@/model/Counting";
+import { RoomKey } from "@/model/RoomKey";
 import { User } from "@/model/User";
 import { firestoreApi } from "./FirestoreApi";
 
@@ -20,7 +22,17 @@ export interface ApiService {
 
     updateEvent: (event: Partial<AgendaEvent>) => Promise<AgendaEvent>,
 
-    deleteEvent: (eventId: string) => Promise<void>
+    deleteEvent: (eventId: string) => Promise<void>,
+
+    findAllUsers: () => Promise<User[]>,
+
+    findAllKeys: () => Promise<RoomKey[]>,
+
+    updateKey: (key: RoomKey) => Promise<RoomKey>,
+
+    saveCountings: (counts: DayCounts) => Promise<void>,
+
+    getCountings: (dayId: string) => Promise<DayCounts | null>
 }
 
 export const API = firestoreApi;

@@ -90,7 +90,7 @@ export default function EventForm(props: CustomFormProps<FormData>) {
             value={props.formData.title}
             onChangeText={(text) => props.onChange({ ...props.formData, title: text })} />
         {props.state?.submitted && hasError(props.errors, 'nameIsEmpty') ? <Text style={styles.fieldError}>Le nom est obligatoire</Text> : null}
-        {props.state?.submitted && (hasError(props.errors, 'nameIsLower') || hasError(props.errors, 'nameIsHigher')) ? <Text style={styles.fieldError}>Le nom doit être entre 3 et 20 caractères</Text> : null}
+        {props.state?.submitted && (hasError(props.errors, 'nameIsLower') || hasError(props.errors, 'nameIsHigher')) ? <Text style={styles.fieldError}>Le nom doit être entre 3 et 40 caractères (saisie {props.formData.title?.length} car.)</Text> : null}
         {props.state?.submitted && hasError(props.errors, 'nameIsInvalid') ? <Text style={styles.fieldError}>Le nom doit être alphanumérique (caractères spéciaux autorisés : # @ *)</Text> : null}
 
         <CustomSelect label="Date"

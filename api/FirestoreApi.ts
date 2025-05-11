@@ -1,13 +1,17 @@
 import { AgendaEvent } from "@/model/AgendaEvent";
+import { DayCounts } from "@/model/Counting";
+import { RoomKey } from "@/model/RoomKey";
 import { User } from "@/model/User";
 import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, where } from "@firebase/firestore";
 import { FirebaseDb } from '../firebaseConfig';
 import { ApiService } from "./Api";
-import { mapAgendaEventToDto, mapDtoToAgendaEvent } from "./Mappers";
+import { mapAgendaEventToDto, mapDtoToAgendaEvent, mapDtoToRoomKey, mapDtoToUser } from "./Mappers";
 
 const Collections = {
     USERS: 'users',
-    EVENTS: 'events'
+    EVENTS: 'events',
+    KEYS: 'keys',
+    COUNTINGS: 'countings'
 }
 
 
@@ -60,7 +64,6 @@ class FirestoreApi implements ApiService {
         console.log('findAllEvents()')
         return getDocs(collection(FirebaseDb, Collections.EVENTS)).then(results => {
             const events = results.docs.map(doc => mapDtoToAgendaEvent(doc.id, doc.data()))
-            console.log('Events', events);
             return events;
         })
     }
@@ -98,6 +101,49 @@ class FirestoreApi implements ApiService {
     deleteEvent(eventId: string): Promise<void> {
         console.log('deleteEvent()', eventId)
         return deleteDoc(doc(FirebaseDb, Collections.EVENTS, eventId))
+    }
+
+    findAllUsers(): Promise<User[]> {
+        console.log('findAllUsers()');
+        return getDocs(collection(FirebaseDb, Collections.USERS))
+            .then(results => results.docs.map(doc => mapDtoToUser(doc.id, doc.data())))
+    }
+
+    findKeyById(keyId: string): Promise<RoomKey | null> {
+        console.log('findKeyById()')
+        return getDoc(doc(FirebaseDb, Collections.KEYS, keyId)).then(result => {
+            return result.data() ? mapDtoToRoomKey(result.id, result.data()) : null
+        })
+    }
+
+    findAllKeys(): Promise<RoomKey[]> {
+        console.log('findAllKeys()')
+        return getDocs(collection(FirebaseDb, Collections.KEYS))
+            .then(results => results.docs.map(doc => mapDtoToRoomKey(doc.id, doc.data())))
+    }
+
+    updateKey(key: RoomKey): Promise<RoomKey> {
+        console.log('updateKey()', key)
+        return setDoc(doc(FirebaseDb, Collections.KEYS, key.id), { ...key })
+            .then(() => this.findKeyById(key.id))
+            .then(k => {
+                if (k === null) {
+                    throw new Error('Fail to find key by id ')
+                }
+                return k;
+            })
+    }
+
+    saveCountings(counts: DayCounts): Promise<void> {
+        console.log('saveCountings()', counts);
+        return setDoc(doc(FirebaseDb, Collections.COUNTINGS, counts.dayId), counts)
+    }
+
+    getCountings(dayId: string): Promise<DayCounts | null> {
+        console.log('getCountings()')
+        return getDoc(doc(FirebaseDb, Collections.COUNTINGS, dayId)).then(result => {
+            return result.data() ? { ...result.data() } as DayCounts : null
+        })
     }
 }
 

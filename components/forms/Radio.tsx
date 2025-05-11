@@ -16,14 +16,16 @@ export default function Radio({ style, label, value, options, onChange, ...props
     const defaultValue = options ? options[0].value : '';
     const [checkedValue, setCheckedValue] = useState(value || defaultValue)
 
+    const onCheck = (value: string) => {
+        setCheckedValue(value)
+        if (onChange)
+            onChange(value)
+    }
+
     return <View style={[styles.container, style]} {...props}>
         <Text style={styles.label}>{label}</Text>
         <View style={{ flexDirection: 'row', gap: 5 }}>
-            {options.map(o => (<Pressable key={o.value} onPress={() => {
-                setCheckedValue(o.value)
-                if (onChange)
-                    onChange(checkedValue)
-            }} android_ripple={{ color: 'white' }}>
+            {options.map(o => (<Pressable key={o.value} onPress={() => onCheck(o.value)} android_ripple={{ color: 'white' }}>
                 <View style={[styles.option, checkedValue === o.value ? styles.checked : null]}>
                     <Text style={[checkedValue === o.value ? styles.checked : null]}>{o.label}</Text>
                 </View></Pressable>))}

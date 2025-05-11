@@ -29,10 +29,13 @@ class RoomService {
                     }
                 }, 0)
 
+            const availableTables = clamp((room.capacity || 0) - (tables || 0), 0, room.capacity)
             return {
                 hour: hh,
                 tables: tables,
-                availableTables: clamp((room.capacity || 0) - (tables || 0), 0, room.capacity)
+                availableTables,
+                capacity: room.capacity,
+                rate: room.capacity ? ((room.capacity - availableTables) / room.capacity) : undefined
             } as Occupation;
         })
 
