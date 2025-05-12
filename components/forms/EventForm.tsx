@@ -158,6 +158,7 @@ export default function EventForm(props: CustomFormProps<FormData>) {
             multiline={true} numberOfLines={10}
             label="Description"
             value={props.formData.description || ''}
+            style={{ fontSize: 14, backgroundColor: 'whitesmoke', borderRadius: 10 }}
             onChangeText={(text) => props.onChange({ ...props.formData, description: text })} />
     </ScrollView>
 }

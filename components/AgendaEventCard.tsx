@@ -6,7 +6,7 @@ import { agendaService } from "@/services/AgendaService";
 import { printGameDay } from "@/utils/Utils";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useState } from "react";
-import { ActivityIndicator, Alert, Dimensions, Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Dimensions, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import Card, { CardProps } from "./Card";
 import IconButton from "./IconButton";
 
@@ -84,9 +84,9 @@ export default function AgendaEventCard({ style, event, ...rest }: Props) {
             </View> : null}
 
             {/* Description */}
-            {rest.complete ? <View style={styles.description}>
+            {rest.complete ? <ScrollView scrollEnabled={true} style={styles.description}>
                 {event.description ? <Text>{event.description}</Text> : <Text>Pas de description</Text>}
-            </View> : null}
+            </ScrollView> : null}
 
             {/* Salle */}
             {event.room ? <View style={styles.location}>
@@ -152,10 +152,6 @@ const styles = StyleSheet.create({
 
     },
     description: {
-        flex: 1,
-        margin: 5,
-        alignSelf: 'flex-start',
-        justifyContent: 'flex-start',
     },
     buttons: {
         flexDirection: 'row',
