@@ -16,7 +16,7 @@ function UserCard({ user }: { user: User }) {
     return <Card>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <MaterialIcons name="person" color={Colors.gray} size={30} />
-            <Text>USER: {user.name}</Text>
+            <Text>{user.firstName} | {user.name}</Text>
         </View>
     </Card>
 }
@@ -31,16 +31,7 @@ export default function UserSelectModal(props: Props) {
         setLoading(true)
         userService.findAllUsers()
             .then(users => {
-                let test = []
-                for (let i = 0; i < 50; i++) {
-                    test.push({
-                        id: 'USER-ID-' + i,
-                        name: 'User ' + i,
-                        firstName: 'Prenom ' + i
-                    } as User)
-                }
-
-                setUsers(test)
+                setUsers(users)
                 setLoading(false)
             }).catch(err => setLoading(false))
     }, [refresh])

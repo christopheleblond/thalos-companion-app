@@ -106,7 +106,7 @@ class FirestoreApi implements ApiService {
     findAllUsers(): Promise<User[]> {
         console.log('findAllUsers()');
         return getDocs(collection(FirebaseDb, Collections.USERS))
-            .then(results => results.docs.map(doc => mapDtoToUser(doc.id, doc.data())))
+            .then(results => results.docs.map(doc => mapDtoToUser(doc.id, doc.data())).sort((a, b) => `${a.firstName}${b.name}`.localeCompare(`${b.firstName}${b.name}`)))
     }
 
     findKeyById(keyId: string): Promise<RoomKey | null> {

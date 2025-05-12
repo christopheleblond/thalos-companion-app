@@ -1,7 +1,6 @@
 import AgendaEventCard from "@/components/AgendaEventCard";
 import IconButton from "@/components/IconButton";
 import EventFormModal from "@/components/modals/EventFormModal";
-import SettingsFormModal from "@/components/modals/SettingsFormModal";
 import { Colors } from "@/constants/Colors";
 import { Months } from "@/constants/Months";
 import { AgendaEvent } from "@/model/AgendaEvent";
@@ -10,7 +9,7 @@ import { settingsService } from "@/services/SettingsService";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useRouter } from "expo-router";
 import { useContext, useEffect, useState } from "react";
-import { Image, SafeAreaView, SectionList, StyleSheet, Text, View } from "react-native";
+import { SectionList, StyleSheet, Text, View } from "react-native";
 import { AppContext } from "./_layout";
 
 type SectionListItem = { title: string, data: AgendaEvent[] }
@@ -54,26 +53,11 @@ export default function Main() {
             })
     }, [needARefresh])
 
-    return (<SafeAreaView style={styles.container}>
-
-        {<SettingsFormModal visible={settingsModalVisible} closeFunction={() => setSettingsModalVisible(false)} onSuccess={(prefs) => {
-            appContext.refresh(`home.events`)
-            appContext.refresh(`agenda`)
-        }} />}
+    return (<>
         <EventFormModal visible={eventFormModalVisible} closeFunction={() => setEventFormModalVisible(false)} onSuccess={(event) => {
             appContext.refresh(`home.events`)
             appContext.refresh(`agenda.${event?.day.id}`)
         }} />
-
-        <View style={styles.header}>
-            <View style={styles.headerLeft}>
-                <Image source={require('@/assets/images/icon50.png')} width={50} height={24} />
-                <Text style={{ color: 'white', fontWeight: 'bold', paddingLeft: 5, fontSize: 20, fontFamily: 'Flowers' }} >La Voie du Thalos</Text>
-            </View>
-            <View style={{ borderRadius: 50, elevation: 2 }}>
-                <IconButton icon="settings" color={Colors.white} onPress={() => setSettingsModalVisible(true)} />
-            </View>
-        </View>
 
         <View style={styles.body}>
             <SectionList
@@ -93,7 +77,7 @@ export default function Main() {
             </View>
         </View>
 
-    </SafeAreaView>);
+    </>);
 }
 
 

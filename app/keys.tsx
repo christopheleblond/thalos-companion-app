@@ -1,7 +1,6 @@
 import Card from "@/components/Card";
 import UserSelectModal from "@/components/modals/UserSelectModal";
 import { Colors } from "@/constants/Colors";
-import { useUserId } from "@/hooks/useUserId";
 import { RoomKey } from "@/model/RoomKey";
 import { User } from "@/model/User";
 import { keyService } from "@/services/KeyService";
@@ -15,8 +14,6 @@ type Props = ViewProps & {
 };
 
 function RoomKeyCard({ roomKey, onChangeOwner, ...rest }: Props) {
-
-    const userId = useUserId();
 
     const [userSelectModalVisible, setUserSelectModalVisible] = useState(false);
 
@@ -36,9 +33,9 @@ function RoomKeyCard({ roomKey, onChangeOwner, ...rest }: Props) {
                     <View>
                         <Text>{roomKey.name}</Text>
 
-                        <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: roomKey.owner ? Colors.green : 'lightgray', padding: 5, borderRadius: 20 }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', padding: 5, borderRadius: 20 }}>
                             <MaterialIcons name="person" size={30} />
-                            {roomKey.owner ? <Text>{roomKey.owner.name}</Text> : <Text>?</Text>}
+                            {roomKey.owner ? <Text style={{ fontWeight: 'bold' }}>{roomKey.owner.name}</Text> : <Text>?</Text>}
                         </View>
                     </View>
                 </View>
@@ -77,13 +74,13 @@ export default function KeysPage({ style, ...props }: Props) {
     useEffect(() => {
         setLoading(true)
         keyService.findAllKeys().then(keys => {
-            setKeys(keys)
+            setKeys(keys.sort((a, b) => a.name.localeCompare(b.name)))
             setLoading(false)
         }).catch(err => setLoading(false))
     }, [refresh])
 
     return <View {...props} style={[styles.container, style]}>
-        <Text>Badges et Clés de la Salle</Text>
+        <Text style={styles.title}>Badges de la salle</Text>
         <View style={{ flex: 1, justifyContent: 'flex-start' }}>
             {loading ? <View style={{ flex: 1, justifyContent: 'center' }}><ActivityIndicator color={Colors.red} size={50} /></View> : null}
             {!loading ? <FlatList
@@ -102,5 +99,14 @@ export default function KeysPage({ style, ...props }: Props) {
 const styles = StyleSheet.create({
     container: {
         flex: 1
+    },
+    title: {
+        alignSelf: 'center',
+        fontSize: 16,
+        textTransform: 'uppercase',
+        justifyContent: 'center',
+        fontWeight: 'bold',
+        color: Colors.gray,
+        padding: 10
     }
 })
