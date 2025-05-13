@@ -1,5 +1,6 @@
 import { AgendaEvent } from "@/model/AgendaEvent";
 import { DayCounts } from "@/model/Counting";
+import { OpenCloseRoom } from "@/model/Room";
 import { RoomKey } from "@/model/RoomKey";
 import { User } from "@/model/User";
 import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, where } from "@firebase/firestore";
@@ -11,7 +12,8 @@ const Collections = {
     USERS: 'users',
     EVENTS: 'events',
     KEYS: 'keys',
-    COUNTINGS: 'countings'
+    COUNTINGS: 'countings',
+    DAYS: 'days'
 }
 
 
@@ -144,6 +146,18 @@ class FirestoreApi implements ApiService {
         return getDoc(doc(FirebaseDb, Collections.COUNTINGS, dayId)).then(result => {
             return result.data() ? { ...result.data() } as DayCounts : null
         })
+    }
+
+    findOpenCloseConfiguration(dayId: string): Promise<OpenCloseRoom | null> {
+        console.log('findOpenCloseConfiguration()')
+        return getDoc(doc(FirebaseDb, Collections.DAYS, dayId)).then(result => {
+            return result.data() ? { ...result.data() } as OpenCloseRoom : null
+        })
+    }
+
+    saveOpenCloseConfiguration(config: OpenCloseRoom): Promise<void> {
+        console.log('saveOpenCloseConfiguration()')
+        return setDoc(doc(FirebaseDb, Collections.DAYS, config.dayId), config)
     }
 }
 

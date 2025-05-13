@@ -6,3 +6,15 @@ export interface Room {
     virtual?: boolean;
 }
 
+export interface OpenCloseRoom {
+    dayId: string;
+    opener?: {
+        id: string;
+        name: string;
+    };
+    openAt: string;
+    closer?: {
+        id: string;
+        name: string;
+    };
+}

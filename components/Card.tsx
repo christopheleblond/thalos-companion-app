@@ -8,7 +8,6 @@ export default function Card({ style, ...rest }: CardProps) {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         backgroundColor: 'white',
         borderRadius: 8,
         padding: 10,
