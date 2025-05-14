@@ -90,10 +90,10 @@ export default function GameDayPage() {
             <IconButton icon="arrow-right" color="gray" onPress={() => goNext()} />
         </View>
         {loading ? <View style={{ flex: 1, justifyContent: 'center' }}><ActivityIndicator color={Colors.red} size={50} /></View> : <>
-            <Pressable onPress={() => setOpenCloseModalVisible(true)}>
-                {day ? <OpenAndCloseRoom day={day} /> : null}
-            </Pressable>
             <ScrollView style={{ flex: 1 / 2 }}>
+                <Pressable onPress={() => setOpenCloseModalVisible(true)}>
+                    {day ? <OpenAndCloseRoom day={day} /> : null}
+                </Pressable>
                 {events?.length === 0 ? <View style={{ padding: 50, alignItems: 'center' }}>
                     <Text>Rien de prévu pour l&lsquo;instant</Text>
                 </View> : events.map(e => (<AgendaEventCard key={e.id} event={e} onPress={() => router.push(`/${e.id}`)} />))}
@@ -111,7 +111,7 @@ export default function GameDayPage() {
                         <MaterialIcons name="table-restaurant" size={20} color={Colors.gray} />
                         <Text style={styles.subtitle}>Nombre de tables utilisées</Text>
                     </View>
-                    {ROOMS.map(r => (<Card key={r.id}>
+                    {realRooms.map(r => (<Card key={r.id}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <MaterialIcons name="location-on" size={20} />
                             <Text>{r.name}</Text>

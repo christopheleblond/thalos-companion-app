@@ -52,7 +52,7 @@ export default function AgendaEventCard({ style, event, ...rest }: Props) {
 
     const { width, height } = Dimensions.get('window');
 
-    return <Card style={{ borderLeftWidth: 10, borderLeftColor: event.activity?.style.backgroundColor }}>
+    return <Card style={{ flex: 1, borderLeftWidth: 10, borderLeftColor: event.activity?.style.backgroundColor }}>
         {loading ? <View style={[styles.backdropContainer, { width, height }]}>
             <View style={[styles.backdrop, { width, height }]}></View>
             <ActivityIndicator style={{ flex: 1, zIndex: 3 }} color={Colors.red} size={100} />
