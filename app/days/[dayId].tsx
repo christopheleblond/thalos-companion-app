@@ -40,6 +40,8 @@ export default function GameDayPage() {
         router.replace(`/days/${nextDay?.id}`)
     }
 
+    const realRooms = ROOMS.filter(r => !r.virtual)
+
     const needARefresh = appContext.refreshs[`agenda.${day?.id}`];
 
     useEffect(() => {
@@ -98,10 +100,10 @@ export default function GameDayPage() {
                     <MaterialIcons name="table-restaurant" size={20} color={Colors.gray} />
                     <Text style={styles.subtitle}>Nombre de tables utilisées</Text>
                 </View>
-                {ROOMS.map(r => (<Card key={r.id}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                {realRooms.map(r => (<Card key={r.id}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', paddingBottom: 5 }}>
                         <MaterialIcons name="location-on" size={20} />
-                        <Text>{r.name}</Text>
+                        <Text>{r.name} ({r.capacity} tables)</Text>
                     </View>
 
                     {day && <OccupationStats room={r} events={events} />}

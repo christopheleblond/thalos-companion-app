@@ -24,7 +24,8 @@ export const ROOMS: Room[] = [
     },
     {
         id: 'autre',
-        name: 'Autre'
+        name: 'Autre',
+        virtual: true
     }
 ]
 
