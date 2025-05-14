@@ -1,6 +1,6 @@
 import { Occupation } from "@/components/OccupationStats";
 import { AgendaEvent } from "@/model/AgendaEvent";
-import { Room } from "@/model/Room";
+import { OpenCloseRoom, Room } from "@/model/Room";
 import { clamp, eventIsActiveAt } from "@/utils/Utils";
 import { API, ApiService } from "../api/Api";
 
@@ -13,6 +13,23 @@ class RoomService {
             this.hours.push(`${i}h`)
             this.hours.push(`${i}h30`)
         }
+    }
+
+    getOpenCloseConfig(dayId: string): Promise<OpenCloseRoom> {
+        return this.api.findOpenCloseConfiguration(dayId).then(result => {
+            if (result == null) {
+                return {
+                    dayId,
+                    openAt: '20h'
+                } as OpenCloseRoom;
+            } else {
+                return result;
+            }
+        });
+    }
+
+    saveOpenCloseConfig(config: OpenCloseRoom): Promise<void> {
+        return this.api.saveOpenCloseConfiguration(config)
     }
 
     getRoomOccupationStatsFromEvents(room: Room, events: AgendaEvent[]): Promise<Occupation[]> {

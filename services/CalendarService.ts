@@ -26,11 +26,11 @@ class CalendarService {
         return result;
     }
 
-    hours(): string[] {
+    hours(startHour = 14, mins = [30]): string[] {
         const results = [];
-        for (let h = 14; h < 24; h++) {
+        for (let h = startHour; h < 24; h++) {
             results.push(`${h}h`);
-            results.push(`${h}h30`);
+            mins.forEach(m => results.push(`${h}h${m}`))
         }
         return results;
     }

@@ -1,5 +1,6 @@
 import { AgendaEvent } from "@/model/AgendaEvent";
 import { DayCounts } from "@/model/Counting";
+import { OpenCloseRoom } from "@/model/Room";
 import { RoomKey } from "@/model/RoomKey";
 import { User } from "@/model/User";
 import { firestoreApi } from "./FirestoreApi";
@@ -32,7 +33,11 @@ export interface ApiService {
 
     saveCountings: (counts: DayCounts) => Promise<void>,
 
-    getCountings: (dayId: string) => Promise<DayCounts | null>
+    getCountings: (dayId: string) => Promise<DayCounts | null>,
+
+    findOpenCloseConfiguration: (dayId: string) => Promise<OpenCloseRoom | null>,
+
+    saveOpenCloseConfiguration: (config: OpenCloseRoom) => Promise<void>
 }
 
 export const API = firestoreApi;
