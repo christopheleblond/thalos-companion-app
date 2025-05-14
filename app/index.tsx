@@ -9,7 +9,7 @@ import { settingsService } from "@/services/SettingsService";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useRouter } from "expo-router";
 import { useContext, useEffect, useState } from "react";
-import { SectionList, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, SectionList, StyleSheet, Text, View } from "react-native";
 import { AppContext } from "./_layout";
 
 type SectionListItem = { title: string, data: AgendaEvent[] }
@@ -66,7 +66,7 @@ export default function Main() {
                 refreshing={loading}
                 keyExtractor={item => item.id}
                 renderSectionHeader={(item) => <Text style={styles.sectionMonth}>{item.section.title}</Text>}
-                ListEmptyComponent={() => <View style={styles.emptyList}>
+                ListEmptyComponent={() => loading ? <View style={{ flex: 1, alignItems: 'center' }}><ActivityIndicator color={Colors.red} /></View> : <View style={styles.emptyList}>
                     <MaterialIcons name={'close'} color={'gray'} size={50} />
                     <Text>Aucun évènement prévu.</Text>
                     <IconButton icon="refresh" color={'gray'} size={50} onPress={() => appContext.refresh('home.events')} />

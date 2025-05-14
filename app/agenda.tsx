@@ -1,16 +1,24 @@
 import GameDayCard from "@/components/GameDayCard";
+import IconButton from "@/components/IconButton";
 import { Colors } from "@/constants/Colors";
 import { Months } from "@/constants/Months";
 import { GameDay } from "@/model/GameDay";
 import { calendarService } from "@/services/CalendarService";
+import { nowMinusDays } from "@/utils/Utils";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Button, Pressable, SectionList, Text, View } from "react-native";
+import { Pressable, SectionList, Text, View } from "react-native";
 
 export default function Agenda() {
 
     const router = useRouter();
-    const [days, setDays] = useState<GameDay[]>(calendarService.buildDaysFromDate(new Date(), 30))
+    const [days, setDays] = useState<GameDay[]>(calendarService.buildDaysFromDate(nowMinusDays(15), 30))
+
+    const daysBefore = () => {
+        const add1Day = new Date(days[0].date)
+        add1Day.setDate(add1Day.getDate() - 30)
+        setDays([...calendarService.buildDaysFromDate(add1Day, 30), ...days])
+    }
 
     const moreDays = () => {
         const add1Day = new Date(days[days.length - 1].date)
@@ -35,7 +43,8 @@ export default function Agenda() {
         <SectionList sections={sections}
             keyExtractor={({ id }) => id}
             renderSectionHeader={(item) => <Text style={{ alignSelf: 'center' }}>{item.section.title}</Text>}
-            ListFooterComponent={() => <Button color={Colors.red} title="Voir plus ..." onPress={() => moreDays()}></Button>}
+            ListHeaderComponent={() => <View style={{ alignItems: 'center' }}><IconButton color={Colors.gray} icon="arrow-upward" onPress={() => daysBefore()} /></View>}
+            ListFooterComponent={() => <View style={{ alignItems: 'center' }}><IconButton color={Colors.gray} icon="arrow-downward" onPress={() => moreDays()} /></View>}
             renderItem={({ item }) => (<Pressable onPress={() => router.push(`/days/${item.id}`)}>
                 <GameDayCard day={item} />
             </Pressable>)}

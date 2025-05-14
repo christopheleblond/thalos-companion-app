@@ -52,6 +52,13 @@ export const ACTIVITIES: Activity[] = [
         style: { color: 'black', backgroundColor: Colors.lightgreen }
     },
     {
+        id: 'paint',
+        name: 'Peinture de figurines',
+        filterable: true,
+        countable: true,
+        style: { color: 'white', backgroundColor: Colors.green }
+    },
+    {
         id: 'reunion',
         name: 'Réunion',
         style: { color: 'white', backgroundColor: Colors.black2 }

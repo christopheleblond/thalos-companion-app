@@ -51,7 +51,7 @@ class RoomService {
                 hour: hh,
                 tables: tables,
                 availableTables,
-                capacity: room.capacity,
+                roomCapacity: room.capacity,
                 rate: room.capacity ? ((room.capacity - availableTables) / room.capacity) : undefined
             } as Occupation;
         })

@@ -144,3 +144,9 @@ export function getWeekNumber(day: Date): number {
     // and the Thursday in the target week (604800000 = 7 * 24 * 3600 * 1000)
     return 1 + Math.ceil((n1stThursday - date.getTime()) / 604800000);
 }
+
+export function nowMinusDays(days: number): Date {
+    let now = new Date();
+    now.setDate(now.getDate() - days)
+    return now;
+}

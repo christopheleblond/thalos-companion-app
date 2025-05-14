@@ -23,6 +23,11 @@ export const ROOMS: Room[] = [
         capacity: 14
     },
     {
+        id: 'sdl',
+        name: 'Salle du Lac',
+        capacity: 100
+    },
+    {
         id: 'autre',
         name: 'Autre',
         virtual: true
